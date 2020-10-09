@@ -305,7 +305,7 @@ public class WallBuilder {
     return mesh;
   }
   private void BuildCellMesh(Cell cell, Dictionary<string, List<Mesh>> meshes) {
-    Debug.Log("Building cell (" + cell.x + ", " + cell.y + ")");
+    // Debug.Log("Building cell (" + cell.x + ", " + cell.y + ")");
     Vector2 cellPosition = new Vector2(cell.x * CellSize, cell.y * CellSize);
     Vector2 nwPoint = worldPosition(cell.nwOffset, nwDirection, cellPosition);
     Vector2 nePoint = worldPosition(cell.neOffset, neDirection, cellPosition);
@@ -317,7 +317,7 @@ public class WallBuilder {
   }
 
   private void BuildPathMesh(Cell from, Cell to, string dir, Dictionary<string, List<Mesh>> meshes) {
-    Debug.Log("Building " + dir + " path from (" + from.x + ", " + from.y + ")");
+    // Debug.Log("Building " + dir + " path from (" + from.x + ", " + from.y + ")");
     Vector2 fromPos = new Vector2(from.x * CellSize, from.y * CellSize);
     Vector2 nwFrom = worldPosition(from.nwOffset, nwDirection, fromPos);
     Vector2 neFrom = worldPosition(from.neOffset, neDirection, fromPos);
@@ -364,7 +364,7 @@ public class WallBuilder {
   }
 
   private void BuildWallMesh(Cell from, string dir, Dictionary<string, List<Mesh>> meshes) {
-    Debug.Log("Building " + dir + " wall for (" + from.x + ", " + from.y + ")");
+    // Debug.Log("Building " + dir + " wall for (" + from.x + ", " + from.y + ")");
     Vector2 fromPos = new Vector2(from.x * CellSize, from.y * CellSize);
     Vector2 nwFrom = worldPosition(from.nwOffset, nwDirection, fromPos);
     Vector2 neFrom = worldPosition(from.neOffset, neDirection, fromPos);

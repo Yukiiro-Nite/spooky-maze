@@ -27,18 +27,18 @@ public class MapManager : MonoBehaviour {
       3. move player to maze start
     */
     Maze maze = MazeGenerator.generate(Width, Height, type);
-
-    Debug.Log("Finished generating maze.");
-    Debug.Log(maze.start);
-    Debug.Log(maze.end);
-
-    Debug.Log("Creating Wall Set.");
     WallBuilder wallBuilder = new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
     wallBuilder.BuildMaze(maze.getCell(0, 0), 5);
 
-    Debug.Log("Testing neigborhood fn...");
-    Debug.Log(maze.Neighborhood(0, 0, 1).Count);
-
     return maze;
+  }
+
+  public void UpdateMaze(int x, int y) {
+    GameObject.Destroy(GameObject.Find("floors"));
+    GameObject.Destroy(GameObject.Find("walls"));
+    GameObject.Destroy(GameObject.Find("ceilings"));
+
+    WallBuilder wallBuilder = new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
+    wallBuilder.BuildMaze(maze.getCell(x, y), 5);
   }
 }
