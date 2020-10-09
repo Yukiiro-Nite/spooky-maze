@@ -121,6 +121,11 @@ public class Maze {
     return false;
   }
 
+  public Cell getNeighbor(Cell cell, string direction) {
+    Vector2 offset = offsetPosition(cell.x, cell.y, direction);
+    return getCell((int)offset.x, (int)offset.y);
+  }
+
   public bool hasUnvisitedNeighbors(Cell cell) {
     List<Cell> neighbors = getNeighbors(cell);
 
@@ -137,9 +142,8 @@ public class Maze {
     string[] directions = { "north", "east", "south", "west" };
     List<Cell> neighbors = new List<Cell>();
 
-    for(int i=0; i < directions.Length; i++) {
-      Vector2 offset = offsetPosition(cell.x, cell.y, directions[i]);
-      Cell neighbor = getCell((int)offset.x, (int)offset.y);
+    foreach(string direction in directions) {
+      Cell neighbor = getNeighbor(cell, direction);
       if(neighbor != null) {
         neighbors.Add(neighbor);
       }
@@ -153,8 +157,7 @@ public class Maze {
     List<Cell> neighbors = new List<Cell>();
 
     foreach(string direction in directions) {
-      Vector2 offset = offsetPosition(cell.x, cell.y, direction);
-      Cell neighbor = getCell((int)offset.x, (int)offset.y);
+      Cell neighbor = getNeighbor(cell, direction);
       if(neighbor != null && IsConnected(cell, neighbor, direction)) {
         neighbors.Add(neighbor);
       }
