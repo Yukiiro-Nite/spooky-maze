@@ -218,12 +218,15 @@ public class WallBuilder {
     meshes.Add("floor", new List<Mesh>());
     meshes.Add("wall", new List<Mesh>());
     meshes.Add("ceiling", new List<Mesh>());
-    
 
+    Material wallMaterial = new Material(Shader.Find("Custom/CaveWall"));
+    wallMaterial.SetColor("_Color", new Color(0.5188f, 0.3614583f, 0.1884567f, 1.0f));
+    wallMaterial.SetFloat("_Glossiness", 0.25f);
+    
     BuildCell(cell, depth, visited, meshes);
-    CreateObject("floors", meshes["floor"], new Material(Shader.Find("Standard")));
-    CreateObject("walls", meshes["wall"], new Material(Shader.Find("Standard")));
-    CreateObject("ceilings", meshes["ceiling"], new Material(Shader.Find("Standard")));
+    CreateObject("floors", meshes["floor"], wallMaterial);
+    CreateObject("walls", meshes["wall"], wallMaterial);
+    CreateObject("ceilings", meshes["ceiling"], wallMaterial);
   }
 
   private void CreateObject(string name, List<Mesh> meshes, Material material) {
