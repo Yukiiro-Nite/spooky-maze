@@ -221,7 +221,8 @@ public class WallBuilder {
 
     Material wallMaterial = new Material(Shader.Find("Custom/CaveWall"));
     wallMaterial.SetColor("_Color", new Color(0.5188f, 0.3614583f, 0.1884567f, 1.0f));
-    wallMaterial.SetFloat("_Glossiness", 0.25f);
+    wallMaterial.SetFloat("_Glossiness", 0.0f);
+    wallMaterial.SetFloat("_Metallic", 0.0f);
     
     BuildCell(cell, depth, visited, meshes);
     CreateObject("floors", meshes["floor"], wallMaterial);

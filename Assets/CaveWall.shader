@@ -58,7 +58,7 @@
             return mod289((34.0 * x + 1.0) * x);
         }
 
-        float2 cellularNoise(float3 P) {
+        float cellular(float3 P) {
             // there's probably a better way to initialize these.
             float K = 0.142857142857; // 1/7
             float Ko = 0.428571428571; // 1/2-K/2
@@ -201,20 +201,46 @@
             d11.yz = min(d11.yz,d12.xy); // nor in d12.yz
             d11.y = min(d11.y,d12.z); // Only two more to go
             d11.y = min(d11.y,d11.z); // Done! (Phew!)
-            return sqrt(d11.xy); // F1, F2
+            return d11.y - d11.x; // F2 - F1 gives a more linear stone texture.
         }
 
         // End credit section
         
-        float noise (float3 pos) {
-            return cellularNoise(pos).y;
+        fixed3 calculateNormal(float3 p) {
+            float ratio = 0.001;
+            fixed3 tlv = p + fixed3(-1.0, 0.0, 1.0) * ratio;
+            fixed3 tv = p + fixed3(0.0, 0.0, 1.0) * ratio;
+            fixed3 trv = p + fixed3(1.0, 0.0, 1.0) * ratio;
+            fixed3 lv = p + fixed3(-1.0, 0.0, 0.0) * ratio;
+            fixed3 rv = p + fixed3(1.0, 0.0, 0.0) * ratio;
+            fixed3 blv = p + fixed3(-1.0, 0.0, -1.0) * ratio;
+            fixed3 bv = p + fixed3(0.0, 0.0, -1.0) * ratio;
+            fixed3 brv = p + fixed3(1.0, 0.0, -1.0) * ratio;
+
+            float tl = cellular(tlv);
+            float t = cellular(tv);
+            float tr = cellular(trv);
+            float l = cellular(lv);
+            float r = cellular(rv);
+            float bl = cellular(blv);
+            float b = cellular(bv);
+            float br = cellular(brv);
+
+            float dx = tl + l*2.0 + bl - tr - r*2.0 - br;
+            float dy = tl + t*2.0 + tr - bl - b*2.0 - br;
+
+            return normalize(fixed3(dx, dy, 0.05));
         }
 
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
+            float3 pos = IN.worldPos * 4.0;
+            float baseNoise = cellular(pos);
             // Albedo comes from a texture tinted by color
-            fixed4 c = noise(IN.worldPos * 4.0) * _Color;
+            fixed4 c = pow(baseNoise, 0.5) * _Color;
             o.Albedo = c.rgb;
+            o.Occlusion = baseNoise;
+            // o.Normal = calculateNormal(pos);
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
             o.Smoothness = _Glossiness;
