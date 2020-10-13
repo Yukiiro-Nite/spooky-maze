@@ -30,6 +30,10 @@ public class MapManager : MonoBehaviour {
     WallBuilder wallBuilder = new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
     wallBuilder.BuildMaze(maze.getCell(0, 0), 5);
 
+    GameObject player = GameObject.Find("Player");
+
+    player.transform.position = new Vector3(maze.start.x * CellSize, 0f, maze.start.y * CellSize);
+
     return maze;
   }
 
