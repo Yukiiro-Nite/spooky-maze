@@ -35,7 +35,7 @@ public class MapManager : MonoBehaviour {
     GameObject exit = GameObject.Find("Exit");
 
     player.transform.position = new Vector3(maze.start.x * CellSize, 0f, maze.start.y * CellSize);
-    exit.transform.position = new Vector3(maze.end.x * CellSize, 0f, maze.end.y * CellSize);
+    exit.transform.position = new Vector3(maze.end.x * CellSize, CeilingHeight, maze.end.y * CellSize);
 
     return maze;
   }
