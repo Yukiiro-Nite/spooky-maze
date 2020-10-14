@@ -21,6 +21,7 @@ public class MapManager : MonoBehaviour {
   }
 
   public Maze InitializeMaze(string type) {
+    ClearMaze();
     /*
       1. generate maze
       2. add maze to scene
@@ -31,18 +32,24 @@ public class MapManager : MonoBehaviour {
     wallBuilder.BuildMaze(maze.getCell(0, 0), 5);
 
     GameObject player = GameObject.Find("Player");
+    GameObject exit = GameObject.Find("Exit");
 
     player.transform.position = new Vector3(maze.start.x * CellSize, 0f, maze.start.y * CellSize);
+    exit.transform.position = new Vector3(maze.end.x * CellSize, 0f, maze.end.y * CellSize);
 
     return maze;
   }
 
   public void UpdateMaze(int x, int y) {
-    GameObject.Destroy(GameObject.Find("floors"));
-    GameObject.Destroy(GameObject.Find("walls"));
-    GameObject.Destroy(GameObject.Find("ceilings"));
+    ClearMaze();
 
     WallBuilder wallBuilder = new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
     wallBuilder.BuildMaze(maze.getCell(x, y), 5);
+  }
+
+  public void ClearMaze() {
+    GameObject.Destroy(GameObject.Find("floors"));
+    GameObject.Destroy(GameObject.Find("walls"));
+    GameObject.Destroy(GameObject.Find("ceilings"));
   }
 }
