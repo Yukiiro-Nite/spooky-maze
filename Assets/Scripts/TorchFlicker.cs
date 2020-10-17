@@ -7,18 +7,20 @@ public class TorchFlicker : MonoBehaviour {
   private Light light;
   public float sparkRate = 0.04f;
   public float intensityDecay = 0.002f;
+  private float originalIntensity;
   void Start() {
     light = this.GetComponent<Light>();
     color = FireColor();
 
     light.color = color;
+    originalIntensity = light.intensity;
   }
 
   void Update() {
     if(Random.value <= sparkRate) {
       color = FireColor();
       light.color = color;
-      light.intensity = 1.0f;
+      light.intensity = originalIntensity;
     } else {
       light.intensity -= intensityDecay;
     }
