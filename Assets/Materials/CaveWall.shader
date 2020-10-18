@@ -3,6 +3,7 @@
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
+        _Depth ("Depth", Range(0,1)) = 1.0
         _MainTex ("Albedo (RGB)", 2D) = "white" {}
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
         _Metallic ("Metallic", Range(0,1)) = 0.0
@@ -27,6 +28,7 @@
             float3 worldPos;
         };
 
+        half _Depth;
         half _Glossiness;
         half _Metallic;
         fixed4 _Color;
@@ -235,7 +237,7 @@
         void surf (Input IN, inout SurfaceOutputStandard o)
         {
             float3 pos = IN.worldPos * 4.0;
-            float baseNoise = cellular(pos);
+            float baseNoise = min(cellular(pos), _Depth);
             // Albedo comes from a texture tinted by color
             fixed4 c = pow(baseNoise, 0.5) * _Color;
             o.Albedo = c.rgb;
@@ -243,7 +245,7 @@
             // o.Normal = calculateNormal(pos);
             // Metallic and smoothness come from slider variables
             o.Metallic = _Metallic;
-            o.Smoothness = _Glossiness;
+            o.Smoothness = baseNoise / 2.0;
             o.Alpha = c.a;
         }
         ENDCG

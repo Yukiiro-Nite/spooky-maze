@@ -219,13 +219,21 @@ public class WallBuilder {
     meshes.Add("wall", new List<Mesh>());
     meshes.Add("ceiling", new List<Mesh>());
 
-    Material wallMaterial = new Material(Shader.Find("Custom/CaveWall"));
-    wallMaterial.SetColor("_Color", new Color(0.5188f, 0.3614583f, 0.1884567f, 1.0f));
-    wallMaterial.SetFloat("_Glossiness", 0.0f);
-    wallMaterial.SetFloat("_Metallic", 0.0f);
+    Material wallMaterial = Resources.Load("CaveWall") as Material;
+    Material floorMaterial = Resources.Load("CaveFloor") as Material;
+    // Material wallMaterial = new Material(Shader.Find("Custom/CaveWall"));
+    // wallMaterial.SetColor("_Color", new Color(0.5188f, 0.3614583f, 0.1884567f, 1.0f));
+    // wallMaterial.SetFloat("_Glossiness", 0.0f);
+    // wallMaterial.SetFloat("_Metallic", 0.0f);
+
+    // Material floorMaterial = new Material(Shader.Find("Custom/CaveWall"));
+    // floorMaterial.SetColor("_Color", new Color(0.5188f, 0.3614583f, 0.1884567f, 1.0f));
+    // floorMaterial.SetFloat("_Depth", 0.1f);
+    // floorMaterial.SetFloat("_Glossiness", 0.0f);
+    // floorMaterial.SetFloat("_Metallic", 0.0f);
     
     BuildCell(cell, depth, visited, meshes);
-    CreateObject("floors", meshes["floor"], wallMaterial);
+    CreateObject("floors", meshes["floor"], floorMaterial);
     CreateObject("walls", meshes["wall"], wallMaterial);
     CreateObject("ceilings", meshes["ceiling"], wallMaterial);
   }
