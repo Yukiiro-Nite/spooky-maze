@@ -241,6 +241,12 @@ public class WallBuilder {
     mesh.CombineMeshes(GetCombineInstances(meshes));
 
     meshFilter.mesh = mesh;
+
+    MeshCollider collider = gameObject.AddComponent<MeshCollider>();
+    Rigidbody body = gameObject.AddComponent<Rigidbody>();
+
+    body.isKinematic = true;
+
   }
 
   private CombineInstance[] GetCombineInstances(List<Mesh> meshes) {
