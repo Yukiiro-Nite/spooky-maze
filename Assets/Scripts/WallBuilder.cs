@@ -19,186 +19,23 @@ public class WallBuilder {
     "south",
     "west"
   };
+  private static readonly Dictionary<String, Dictionary<String, Material>> materials = new Dictionary<string, Dictionary<string, Material>> {
+    {"cave", new Dictionary<string, Material> {
+      {"floor", Resources.Load("CaveFloor") as Material},
+      {"wall", Resources.Load("CaveWall") as Material},
+      {"ceiling", Resources.Load("CaveWall") as Material}
+    }},
+    {"sewer", new Dictionary<string, Material> {
+      {"floor", Resources.Load("Concrete") as Material},
+      {"wall", Resources.Load("Concrete") as Material},
+      {"ceiling", Resources.Load("Concrete") as Material}
+    }},
+  };
   public WallBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight) {
     this.maze = maze;
     this.CellSize = CellSize;
     this.MinWidth = MinWidth;
     this.CeilingHeight = CeilingHeight;
-  }
-
-  public List<GameObject> Quads() {
-    HashSet<Wall> walls = GetWalls();
-    List<GameObject> gameObjects = new List<GameObject>();
-
-    foreach(Wall currentWall in walls) {
-      gameObjects.Add(CreateQuad(currentWall));
-    }
-
-    return gameObjects;
-  }
-
-  public GameObject CreateQuad(Wall wall) {
-    GameObject gameObject = new GameObject("Wall");
-    MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
-    meshRenderer.sharedMaterial = new Material(Shader.Find("Standard"));
-
-    MeshFilter meshFilter = gameObject.AddComponent<MeshFilter>();
-
-    Mesh mesh = new Mesh();
-
-    Vector3[] vertices = new Vector3[4] {
-      new Vector3(wall.P1.x, 0, wall.P1.y),
-      new Vector3(wall.P1.x, CeilingHeight, wall.P1.y),
-      new Vector3(wall.P2.x, CeilingHeight, wall.P2.y),
-      new Vector3(wall.P2.x, 0, wall.P2.y)
-    };
-    mesh.vertices = vertices;
-
-    int[] tris = new int[6] {
-      0, 2, 1,
-      0, 3, 2
-    };
-    mesh.triangles = tris;
-
-    Vector3 normal = new Plane(vertices[0], vertices[2], vertices[1]).normal;
-    Vector3[] normals = new Vector3[4] {
-      normal,
-      normal,
-      normal,
-      normal
-    };
-    mesh.normals = normals;
-
-    // double check these later, Y coord might be upside down.
-    // I'm not sure if UV coords start at top left or bottom left.
-    Vector2[] uv = new Vector2[4] {
-      new Vector2(0, 0),
-      new Vector2(0, 1),
-      new Vector2(1, 1),
-      new Vector2(1, 0)
-    };
-    mesh.uv = uv;
-
-    meshFilter.mesh = mesh;
-
-    return gameObject;
-  }
-
-  public HashSet<Wall> GetWalls() {
-    HashSet<Wall> walls = new HashSet<Wall>();
-
-    for (int y = 0; y < maze.height; y++) {
-      for (int x = 0; x < maze.width; x++) {
-        HashSet<Wall> cellWalls = GetWallsForCell(x, y);
-        walls.UnionWith(cellWalls);
-      }
-    }
-
-    return walls;
-  }
-
-  public HashSet<Wall> GetWalls(HashSet<Cell> cells) {
-    HashSet<Wall> walls = new HashSet<Wall>();
-
-    foreach (Cell cell in cells) {
-      HashSet<Wall> cellWalls = GetWallsForCell(cell);
-      walls.UnionWith(cellWalls);
-    }
-
-    return walls;
-  }
-
-  private HashSet<Wall> GetWallsForCell(Cell cell) {
-    return GetWallsForCell(cell.x, cell.y);
-  }
-
-  private HashSet<Wall> GetWallsForCell(int x, int y) {
-    HashSet<Wall> cellWalls = new HashSet<Wall>();
-
-    Cell cell = maze.getCell(x, y);
-    Vector2 positionOffset = new Vector2(x * CellSize, y * CellSize);
-
-    Cell northNeighbor = maze.getCell(x, y-1);
-    Vector2 northOffset = new Vector2(x * CellSize, (y-1) * CellSize);
-
-    Cell eastNeighbor = maze.getCell(x+1, y);
-    Vector2 eastOffset = new Vector2((x+1) * CellSize, y * CellSize);
-
-    Cell southNeighbor = maze.getCell(x, y+1);
-    Vector2 southOffset = new Vector2(x * CellSize, (y+1) * CellSize);
-
-    Cell westNeighbor = maze.getCell(x-1, y);
-    Vector2 westOffset = new Vector2((x-1) * CellSize, y * CellSize);
-
-    if(northNeighbor != null && cell.north && northNeighbor.south) {
-      // setup walls between cell.nw && north.sw, cell.ne && north.se
-      cellWalls.Add(new Wall(
-        worldPosition(cell.nwOffset, nwDirection, positionOffset),
-        worldPosition(northNeighbor.swOffset, swDirection, northOffset)
-      ));
-      cellWalls.Add(new Wall(
-        worldPosition(cell.neOffset, neDirection, positionOffset),
-        worldPosition(northNeighbor.seOffset, seDirection, northOffset)
-      ));
-
-    } else {
-      // setup walls between cell.nw && cell.ne
-      cellWalls.Add(new Wall(
-        worldPosition(cell.nwOffset, nwDirection, positionOffset),
-        worldPosition(cell.neOffset, neDirection, positionOffset)
-      ));
-    }
-
-    if(eastNeighbor != null && cell.east && eastNeighbor.west) {
-      cellWalls.Add(new Wall(
-        worldPosition(cell.neOffset, neDirection, positionOffset),
-        worldPosition(eastNeighbor.nwOffset, nwDirection, eastOffset)
-      ));
-      cellWalls.Add(new Wall(
-        worldPosition(eastNeighbor.swOffset, swDirection, eastOffset),
-        worldPosition(cell.seOffset, seDirection, positionOffset)
-      ));
-
-    } else {
-      cellWalls.Add(new Wall(
-        worldPosition(cell.neOffset, neDirection, positionOffset),
-        worldPosition(cell.seOffset, seDirection, positionOffset)
-      ));
-    }
-
-    if(southNeighbor != null && cell.south && southNeighbor.north) {
-      cellWalls.Add(new Wall(
-        worldPosition(cell.seOffset, seDirection, positionOffset),
-        worldPosition(southNeighbor.neOffset, neDirection, southOffset)
-      ));
-      cellWalls.Add(new Wall(
-        worldPosition(southNeighbor.nwOffset, nwDirection, southOffset),
-        worldPosition(cell.swOffset, swDirection, positionOffset)
-      ));
-    } else {
-      cellWalls.Add(new Wall(
-        worldPosition(cell.seOffset, seDirection, positionOffset),
-        worldPosition(cell.swOffset, swDirection, positionOffset)
-      ));
-    }
-
-    if(westNeighbor != null && cell.west && westNeighbor.east) {
-      cellWalls.Add(new Wall(
-        worldPosition(cell.swOffset, swDirection, positionOffset),
-        worldPosition(westNeighbor.seOffset, seDirection, westOffset)
-      ));
-      cellWalls.Add(new Wall(
-        worldPosition(cell.nwOffset, nwDirection, positionOffset),
-        worldPosition(westNeighbor.neOffset, neDirection, westOffset)
-      ));
-    } else {
-      cellWalls.Add(new Wall(
-        worldPosition(cell.swOffset, swDirection, positionOffset),
-        worldPosition(cell.nwOffset, nwDirection, positionOffset)
-      ));
-    }
-
-    return cellWalls;
   }
 
   private Vector2 worldPosition(
@@ -219,23 +56,14 @@ public class WallBuilder {
     meshes.Add("wall", new List<Mesh>());
     meshes.Add("ceiling", new List<Mesh>());
 
-    Material wallMaterial = Resources.Load("CaveWall") as Material;
-    Material floorMaterial = Resources.Load("CaveFloor") as Material;
-    // Material wallMaterial = new Material(Shader.Find("Custom/CaveWall"));
-    // wallMaterial.SetColor("_Color", new Color(0.5188f, 0.3614583f, 0.1884567f, 1.0f));
-    // wallMaterial.SetFloat("_Glossiness", 0.0f);
-    // wallMaterial.SetFloat("_Metallic", 0.0f);
-
-    // Material floorMaterial = new Material(Shader.Find("Custom/CaveWall"));
-    // floorMaterial.SetColor("_Color", new Color(0.5188f, 0.3614583f, 0.1884567f, 1.0f));
-    // floorMaterial.SetFloat("_Depth", 0.1f);
-    // floorMaterial.SetFloat("_Glossiness", 0.0f);
-    // floorMaterial.SetFloat("_Metallic", 0.0f);
+    Material wallMaterial = GetMaterial(maze.type, "wall");
+    Material floorMaterial = GetMaterial(maze.type, "floor");
+    Material ceilingMaterial = GetMaterial(maze.type, "ceiling");
     
     BuildCell(cell, depth, visited, meshes);
     CreateObject("floors", meshes["floor"], floorMaterial);
     CreateObject("walls", meshes["wall"], wallMaterial);
-    CreateObject("ceilings", meshes["ceiling"], wallMaterial);
+    CreateObject("ceilings", meshes["ceiling"], ceilingMaterial);
   }
 
   private void CreateObject(string name, List<Mesh> meshes, Material material) {
@@ -437,5 +265,9 @@ public class WallBuilder {
       new Vector3(farRight.x, CeilingHeight, farRight.y),
       new Vector3(farLeft.x, CeilingHeight, farLeft.y)
     );
+  }
+
+  private Material GetMaterial(String zoneType, String faceType) {
+    return materials[zoneType][faceType];
   }
 }

@@ -38,7 +38,7 @@ public class ExitHandler : MonoBehaviour {
  
   private IEnumerator Wait(float seconds) {
       yield return new WaitForSeconds(seconds);
-      mapManager.InitializeMaze("cave");
+      mapManager.InitializeMaze();
 
       exiting = false;
   }
