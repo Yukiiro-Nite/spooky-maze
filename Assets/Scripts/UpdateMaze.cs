@@ -22,9 +22,10 @@ public class UpdateMaze : MonoBehaviour {
   }
 
   public Vector2 GetGridPosition() {
+    float cellSize = mapManager.CurrentConfig().CellSize;
     return new Vector2(
-      (float)Math.Ceiling((Camera.main.transform.position.x - mapManager.CellSize /  2.0) / mapManager.CellSize),
-      (float)Math.Ceiling((Camera.main.transform.position.z - mapManager.CellSize /  2.0) / mapManager.CellSize)
+      (float)Math.Ceiling((Camera.main.transform.position.x - cellSize /  2.0) / cellSize),
+      (float)Math.Ceiling((Camera.main.transform.position.z - cellSize /  2.0) / cellSize)
     );
   }
 }

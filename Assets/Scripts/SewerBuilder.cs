@@ -6,7 +6,7 @@ using UnityEngine;
 public class SewerBuilder : WallBuilder {
   public float channelWidth = 0.5f;
   public float channelDepth = -0.05f;
-  public SewerBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight): base(maze, CellSize, MinWidth, CeilingHeight) {}
+  public SewerBuilder(Maze maze, MazeConfig config): base(maze, config) {}
 
   public override void BuildMaze(Cell cell, int depth) {
     Dictionary<Cell, int> visited = new Dictionary<Cell, int>();
@@ -24,7 +24,6 @@ public class SewerBuilder : WallBuilder {
   }
 
   protected override void Floor(Vector2 nearLeft, Vector2 farLeft, Vector2 farRight, Vector2 nearRight, Dictionary<string, List<Mesh>> meshes, Dictionary<string, bool> dir) {
-    Debug.Log("Calling sewer specific floor builder");
     Channel(nearLeft, farLeft, farRight, nearRight, meshes, dir);
   }
 

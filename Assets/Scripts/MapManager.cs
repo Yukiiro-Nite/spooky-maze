@@ -10,13 +10,20 @@ public class MapManager : MonoBehaviour {
   public float CeilingHeight = 2.5f;
   public float CellSize = 3f;
   public float MinWidth = 1f;
+  public float CellPadding = 0f;
+  public int RenderDepth = 5;
   private Maze maze;
   private static readonly Dictionary<string, string> nextType = new Dictionary<string, string> {
     {"cave", "sewer"},
     {"sewer", "cave"},
   };
+  private Dictionary<string, MazeConfig> mazeConf;
   // Start is called before the first frame update
   void Start() {
+    mazeConf = new Dictionary<string, MazeConfig> {
+      {"cave", new MazeConfig(Width, Height, 2.5f, 5f, 1f, 1f, 5)},
+      {"sewer", new MazeConfig(Width, Height, 2.5f, 2.5f, 2.25f, 1f, 7)}
+    };
     InitializeMaze();
   }
 
@@ -32,24 +39,32 @@ public class MapManager : MonoBehaviour {
       2. add maze to scene
       3. move player to maze start
     */
-    Maze maze = MazeGenerator.generate(Width, Height, GetNextMazeType());
-    WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight);
-    wallBuilder.BuildMaze(maze.getCell(0, 0), 5);
+    this.maze = MazeGenerator.generate(Width, Height, GetNextMazeType());
+    MazeConfig config = CurrentConfig();
+    WallBuilder wallBuilder = GetBuilder(maze, config);
+    wallBuilder.BuildMaze(maze.getCell(0, 0), config.RenderDepth);
 
     GameObject player = GameObject.Find("Player");
     GameObject exit = GameObject.Find("Exit");
 
-    player.transform.position = new Vector3(maze.start.x * CellSize, 0f, maze.start.y * CellSize);
-    exit.transform.position = new Vector3(maze.end.x * CellSize, CeilingHeight, maze.end.y * CellSize);
-
-    this.maze = maze;
+    player.transform.position = new Vector3(
+      maze.start.x * config.CellSize,
+      0f,
+      maze.start.y * config.CellSize
+    );
+    exit.transform.position = new Vector3(
+      maze.end.x * config.CellSize,
+      config.CeilingHeight,
+      maze.end.y * config.CellSize
+    );
   }
 
   public void UpdateMaze(int x, int y) {
     ClearMaze();
 
-    WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight);
-    wallBuilder.BuildMaze(maze.getCell(x, y), 5);
+    MazeConfig config = CurrentConfig();
+    WallBuilder wallBuilder = GetBuilder(maze, config);
+    wallBuilder.BuildMaze(maze.getCell(x, y), config.RenderDepth);
   }
 
   public void ClearMaze() {
@@ -65,11 +80,18 @@ public class MapManager : MonoBehaviour {
       : nextType[this.maze.type];
   }
 
-  public WallBuilder GetBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight) {
+  public MazeConfig CurrentConfig() {
+    MazeConfig defaultConfig = new MazeConfig(Width, Height, CeilingHeight, CellSize, MinWidth, CellPadding, RenderDepth);
+    return mazeConf.ContainsKey(maze.type)
+      ? mazeConf[maze.type]
+      : defaultConfig;
+  }
+
+  public WallBuilder GetBuilder(Maze maze, MazeConfig config) {
     switch(maze.type) {
-      case "cave": return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
-      case "sewer": return new SewerBuilder(maze, CellSize, MinWidth, CeilingHeight);
-      default: return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
+      case "cave": return new WallBuilder(maze, config);
+      case "sewer": return new SewerBuilder(maze, config);
+      default: return new WallBuilder(maze, config);
     }
   }
 }
