@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class MapManager : MonoBehaviour {
+  public string defaultType = "cave";
   public int Width = 50;
   public int Height = 50;
   public float CeilingHeight = 2.5f;
@@ -32,7 +33,7 @@ public class MapManager : MonoBehaviour {
       3. move player to maze start
     */
     Maze maze = MazeGenerator.generate(Width, Height, GetNextMazeType());
-    WallBuilder wallBuilder = new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
+    WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight);
     wallBuilder.BuildMaze(maze.getCell(0, 0), 5);
 
     GameObject player = GameObject.Find("Player");
@@ -47,7 +48,7 @@ public class MapManager : MonoBehaviour {
   public void UpdateMaze(int x, int y) {
     ClearMaze();
 
-    WallBuilder wallBuilder = new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
+    WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight);
     wallBuilder.BuildMaze(maze.getCell(x, y), 5);
   }
 
@@ -55,11 +56,20 @@ public class MapManager : MonoBehaviour {
     GameObject.Destroy(GameObject.Find("floors"));
     GameObject.Destroy(GameObject.Find("walls"));
     GameObject.Destroy(GameObject.Find("ceilings"));
+    GameObject.Destroy(GameObject.Find("channels"));
   }
 
   public string GetNextMazeType() {
     return this.maze == null
-      ? "cave"
+      ? defaultType
       : nextType[this.maze.type];
+  }
+
+  public WallBuilder GetBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight) {
+    switch(maze.type) {
+      case "cave": return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
+      case "sewer": return new SewerBuilder(maze, CellSize, MinWidth, CeilingHeight);
+      default: return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
+    }
   }
 }

@@ -4,31 +4,32 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class WallBuilder {
-  private Maze maze;
-  private float CellSize;
-  private float MinWidth;
-  private float CeilingHeight;
+  protected Maze maze;
+  protected float CellSize;
+  protected float MinWidth;
+  protected float CeilingHeight;
 
-  private static readonly Vector2 nwDirection = new Vector2(-1, -1);
-  private static readonly Vector2 neDirection = new Vector2(1, -1);
-  private static readonly Vector2 seDirection = new Vector2(1, 1);
-  private static readonly Vector2 swDirection = new Vector2(-1, 1);
-  private static readonly string[] directions = new string[4] {
+  protected static readonly Vector2 nwDirection = new Vector2(-1, -1);
+  protected static readonly Vector2 neDirection = new Vector2(1, -1);
+  protected static readonly Vector2 seDirection = new Vector2(1, 1);
+  protected static readonly Vector2 swDirection = new Vector2(-1, 1);
+  protected static readonly string[] directions = new string[4] {
     "north",
     "east",
     "south",
     "west"
   };
-  private static readonly Dictionary<String, Dictionary<String, Material>> materials = new Dictionary<string, Dictionary<string, Material>> {
+  protected static readonly Dictionary<String, Dictionary<String, Material>> materials = new Dictionary<string, Dictionary<string, Material>> {
     {"cave", new Dictionary<string, Material> {
-      {"floor", Resources.Load("CaveFloor") as Material},
-      {"wall", Resources.Load("CaveWall") as Material},
-      {"ceiling", Resources.Load("CaveWall") as Material}
+      {"floors", Resources.Load("CaveFloor") as Material},
+      {"walls", Resources.Load("CaveWall") as Material},
+      {"ceilings", Resources.Load("CaveWall") as Material}
     }},
     {"sewer", new Dictionary<string, Material> {
-      {"floor", Resources.Load("Concrete") as Material},
-      {"wall", Resources.Load("Concrete") as Material},
-      {"ceiling", Resources.Load("Concrete") as Material}
+      {"floors", Resources.Load("Concrete") as Material},
+      {"walls", Resources.Load("Concrete") as Material},
+      {"ceilings", Resources.Load("Concrete") as Material},
+      {"channels", Resources.Load("SewerWater") as Material}
     }},
   };
   public WallBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight) {
@@ -38,7 +39,7 @@ public class WallBuilder {
     this.CeilingHeight = CeilingHeight;
   }
 
-  private Vector2 worldPosition(
+  protected Vector2 worldPosition(
     Vector2 innerOffset,
     Vector2 direction,
     Vector2 position
@@ -49,24 +50,21 @@ public class WallBuilder {
       + (position + direction * minWidthOffset);
   }
 
-  public void BuildMaze(Cell cell, int depth) {
+  public virtual void BuildMaze(Cell cell, int depth) {
     Dictionary<Cell, int> visited = new Dictionary<Cell, int>();
     Dictionary<string, List<Mesh>> meshes = new Dictionary<string, List<Mesh>>();
     meshes.Add("floor", new List<Mesh>());
     meshes.Add("wall", new List<Mesh>());
     meshes.Add("ceiling", new List<Mesh>());
-
-    Material wallMaterial = GetMaterial(maze.type, "wall");
-    Material floorMaterial = GetMaterial(maze.type, "floor");
-    Material ceilingMaterial = GetMaterial(maze.type, "ceiling");
     
     BuildCell(cell, depth, visited, meshes);
-    CreateObject("floors", meshes["floor"], floorMaterial);
-    CreateObject("walls", meshes["wall"], wallMaterial);
-    CreateObject("ceilings", meshes["ceiling"], ceilingMaterial);
+    CreateObject("floors", meshes["floor"], maze.type);
+    CreateObject("walls", meshes["wall"], maze.type);
+    CreateObject("ceilings", meshes["ceiling"], maze.type);
   }
 
-  private void CreateObject(string name, List<Mesh> meshes, Material material) {
+  protected void CreateObject(string name, List<Mesh> meshes, string zoneType) {
+    Material material = GetMaterial(zoneType, name);
     GameObject gameObject = new GameObject(name);
     MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
     meshRenderer.sharedMaterial = material;
@@ -85,7 +83,7 @@ public class WallBuilder {
 
   }
 
-  private CombineInstance[] GetCombineInstances(List<Mesh> meshes) {
+  protected CombineInstance[] GetCombineInstances(List<Mesh> meshes) {
     CombineInstance[] combineInstances = new CombineInstance[meshes.Count];
 
     for(int i=0; i < meshes.Count; i++) {
@@ -97,7 +95,7 @@ public class WallBuilder {
     return combineInstances;
   }
 
-  private void BuildCell(Cell cell, int depth, Dictionary<Cell, int> visited, Dictionary<string, List<Mesh>> meshes) {
+  protected void BuildCell(Cell cell, int depth, Dictionary<Cell, int> visited, Dictionary<string, List<Mesh>> meshes) {
     visited.Add(cell, depth);
     BuildCellMesh(cell, meshes);
 
@@ -127,8 +125,7 @@ public class WallBuilder {
     }
   }
 
-
-  private Mesh QuadFromPoints(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3) {
+  protected Mesh QuadFromPoints(Vector3 p0, Vector3 p1, Vector3 p2, Vector3 p3) {
     Mesh mesh = new Mesh();
     mesh.vertices = new Vector3[4] {p0, p1, p2, p3};
 
@@ -150,7 +147,7 @@ public class WallBuilder {
 
     return mesh;
   }
-  private void BuildCellMesh(Cell cell, Dictionary<string, List<Mesh>> meshes) {
+  protected void BuildCellMesh(Cell cell, Dictionary<string, List<Mesh>> meshes) {
     // Debug.Log("Building cell (" + cell.x + ", " + cell.y + ")");
     Vector2 cellPosition = new Vector2(cell.x * CellSize, cell.y * CellSize);
     Vector2 nwPoint = worldPosition(cell.nwOffset, nwDirection, cellPosition);
@@ -158,11 +155,11 @@ public class WallBuilder {
     Vector2 sePoint = worldPosition(cell.seOffset, seDirection, cellPosition);
     Vector2 swPoint = worldPosition(cell.swOffset, swDirection, cellPosition);
 
-    meshes["floor"].Add(Floor(swPoint, nwPoint, nePoint, sePoint));
-    meshes["ceiling"].Add(Ceiling(swPoint, nwPoint, nePoint, sePoint));
+    Floor(swPoint, nwPoint, nePoint, sePoint, meshes, GetDirections(cell, "north"));
+    Ceiling(swPoint, nwPoint, nePoint, sePoint, meshes, GetDirections(cell, "north"));
   }
 
-  private void BuildPathMesh(Cell from, Cell to, string dir, Dictionary<string, List<Mesh>> meshes) {
+  protected void BuildPathMesh(Cell from, Cell to, string dir, Dictionary<string, List<Mesh>> meshes) {
     // Debug.Log("Building " + dir + " path from (" + from.x + ", " + from.y + ")");
     Vector2 fromPos = new Vector2(from.x * CellSize, from.y * CellSize);
     Vector2 nwFrom = worldPosition(from.nwOffset, nwDirection, fromPos);
@@ -176,40 +173,30 @@ public class WallBuilder {
     Vector2 seTo = worldPosition(to.seOffset, seDirection, toPos);
     Vector2 swTo = worldPosition(to.swOffset, swDirection, toPos);
 
-    Mesh leftWall = new Mesh(),
-         rightWall = new Mesh(),
-         floor = new Mesh(),
-         ceiling = new Mesh();
-
     if(dir == "north") {
-      leftWall = LeftWall(nwFrom, swTo);
-      rightWall = RightWall(neFrom, seTo);
-      floor = Floor(nwFrom, swTo, seTo, neFrom);
-      ceiling = Ceiling(nwFrom, swTo, seTo, neFrom);
+      LeftWall(nwFrom, swTo, meshes);
+      RightWall(neFrom, seTo, meshes);
+      Floor(nwFrom, swTo, seTo, neFrom, meshes, GetPathDirections());
+      Ceiling(nwFrom, swTo, seTo, neFrom, meshes, GetPathDirections());
     } else if(dir == "east") {
-      leftWall = LeftWall(neFrom, nwTo);
-      rightWall = RightWall(seFrom, swTo);
-      floor = Floor(neFrom, nwTo, swTo, seFrom);
-      ceiling = Ceiling(neFrom, nwTo, swTo, seFrom);
+      LeftWall(neFrom, nwTo, meshes);
+      RightWall(seFrom, swTo, meshes);
+      Floor(neFrom, nwTo, swTo, seFrom, meshes, GetPathDirections());
+      Ceiling(neFrom, nwTo, swTo, seFrom, meshes, GetPathDirections());
     } else if(dir == "south") {
-      leftWall = LeftWall(seFrom, neTo);
-      rightWall = RightWall(swFrom, nwTo);
-      floor = Floor(seFrom, neTo, nwTo, swFrom);
-      ceiling = Ceiling(seFrom, neTo, nwTo, swFrom);
+      LeftWall(seFrom, neTo, meshes);
+      RightWall(swFrom, nwTo, meshes);
+      Floor(seFrom, neTo, nwTo, swFrom, meshes, GetPathDirections());
+      Ceiling(seFrom, neTo, nwTo, swFrom, meshes, GetPathDirections());
     } else if(dir == "west") {
-      leftWall = LeftWall(swFrom, seTo);
-      rightWall = RightWall(nwFrom, neTo);
-      floor = Floor(swFrom, seTo, neTo, nwFrom);
-      ceiling = Ceiling(swFrom, seTo, neTo, nwFrom);
+      LeftWall(swFrom, seTo, meshes);
+      RightWall(nwFrom, neTo, meshes);
+      Floor(swFrom, seTo, neTo, nwFrom, meshes, GetPathDirections());
+      Ceiling(swFrom, seTo, neTo, nwFrom, meshes, GetPathDirections());
     }
-
-    meshes["wall"].Add(leftWall);
-    meshes["wall"].Add(rightWall);
-    meshes["floor"].Add(floor);
-    meshes["ceiling"].Add(ceiling);
   }
 
-  private void BuildWallMesh(Cell from, string dir, Dictionary<string, List<Mesh>> meshes) {
+  protected void BuildWallMesh(Cell from, string dir, Dictionary<string, List<Mesh>> meshes) {
     // Debug.Log("Building " + dir + " wall for (" + from.x + ", " + from.y + ")");
     Vector2 fromPos = new Vector2(from.x * CellSize, from.y * CellSize);
     Vector2 nwFrom = worldPosition(from.nwOffset, nwDirection, fromPos);
@@ -217,57 +204,97 @@ public class WallBuilder {
     Vector2 seFrom = worldPosition(from.seOffset, seDirection, fromPos);
     Vector2 swFrom = worldPosition(from.swOffset, swDirection, fromPos);
 
-    Mesh wall = new Mesh();
-
     if(dir == "north") {
-      wall = LeftWall(nwFrom, neFrom);
+      LeftWall(nwFrom, neFrom, meshes);
     } else if(dir == "east") {
-      wall = LeftWall(neFrom, seFrom);
+      LeftWall(neFrom, seFrom, meshes);
     } else if(dir == "south") {
-      wall = LeftWall(seFrom, swFrom);
+      LeftWall(seFrom, swFrom, meshes);
     } else if(dir == "west") {
-      wall = LeftWall(swFrom, nwFrom);
+      LeftWall(swFrom, nwFrom, meshes);
     }
-
-    meshes["wall"].Add(wall);
   }
 
-  private Mesh LeftWall(Vector2 nearLeft, Vector2 farLeft) {
-    return QuadFromPoints(
+  protected virtual void LeftWall(Vector2 nearLeft, Vector2 farLeft, Dictionary<string, List<Mesh>> meshes) {
+    meshes["wall"].Add(QuadFromPoints(
       new Vector3(nearLeft.x, CeilingHeight, nearLeft.y),
       new Vector3(farLeft.x, CeilingHeight, farLeft.y),
       new Vector3(farLeft.x, 0, farLeft.y),
       new Vector3(nearLeft.x, 0, nearLeft.y)
-    );
+    ));
   }
-  private Mesh RightWall(Vector2 nearRight, Vector2 farRight) {
-    return QuadFromPoints(
+  protected virtual void RightWall(Vector2 nearRight, Vector2 farRight, Dictionary<string, List<Mesh>> meshes) {
+    meshes["wall"].Add(QuadFromPoints(
       new Vector3(farRight.x, CeilingHeight, farRight.y),
       new Vector3(nearRight.x, CeilingHeight, nearRight.y),
       new Vector3(nearRight.x, 0, nearRight.y),
       new Vector3(farRight.x, 0, farRight.y)
-    );
+    ));
   }
 
-  private Mesh Floor(Vector2 nearLeft, Vector2 farLeft, Vector2 farRight, Vector2 nearRight) {
-    return QuadFromPoints(
+  protected virtual void Floor(Vector2 nearLeft, Vector2 farLeft, Vector2 farRight, Vector2 nearRight, Dictionary<string, List<Mesh>> meshes, Dictionary<string, bool> dir) {
+    meshes["floor"].Add(QuadFromPoints(
       new Vector3(farLeft.x, 0, farLeft.y),
       new Vector3(farRight.x, 0, farRight.y),
       new Vector3(nearRight.x, 0, nearRight.y),
       new Vector3(nearLeft.x, 0, nearLeft.y)
-    );
+    ));
   }
 
-  private Mesh Ceiling(Vector2 nearLeft, Vector2 farLeft, Vector2 farRight, Vector2 nearRight) {
-    return QuadFromPoints(
+  protected virtual void Ceiling(Vector2 nearLeft, Vector2 farLeft, Vector2 farRight, Vector2 nearRight, Dictionary<string, List<Mesh>> meshes, Dictionary<string, bool> dir) {
+    meshes["ceiling"].Add(QuadFromPoints(
       new Vector3(nearLeft.x, CeilingHeight, nearLeft.y),
       new Vector3(nearRight.x, CeilingHeight, nearRight.y),
       new Vector3(farRight.x, CeilingHeight, farRight.y),
       new Vector3(farLeft.x, CeilingHeight, farLeft.y)
-    );
+    ));
   }
 
-  private Material GetMaterial(String zoneType, String faceType) {
+  protected Material GetMaterial(String zoneType, String faceType) {
     return materials[zoneType][faceType];
+  }
+
+  protected Dictionary<string, bool> GetDirections(Cell cell, string direction) {
+    switch(direction) {
+      case "north": return new Dictionary<string, bool> {
+        {"front", cell.north},
+        {"right", cell.east},
+        {"back", cell.south},
+        {"left", cell.west}
+      };
+      case "east": return new Dictionary<string, bool> {
+        {"front", cell.east},
+        {"right", cell.south},
+        {"back", cell.west},
+        {"left", cell.north}
+      };
+      case "south": return new Dictionary<string, bool> {
+        {"front", cell.south},
+        {"right", cell.west},
+        {"back", cell.north},
+        {"left", cell.east}
+      };
+      case "west": return new Dictionary<string, bool> {
+        {"front", cell.west},
+        {"right", cell.north},
+        {"back", cell.east},
+        {"left", cell.south}
+      };
+      default: return new Dictionary<string, bool> {
+        {"front", cell.north},
+        {"right", cell.east},
+        {"back", cell.south},
+        {"left", cell.west}
+      };
+    }
+  }
+
+  protected Dictionary<string, bool> GetPathDirections() {
+    return new Dictionary<string, bool> {
+        {"front", true},
+        {"right", false},
+        {"back", true},
+        {"left", false},
+      };
   }
 }
