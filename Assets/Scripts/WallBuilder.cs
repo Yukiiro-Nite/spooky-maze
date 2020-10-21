@@ -8,7 +8,6 @@ public class WallBuilder {
   protected float CellSize;
   protected float MinWidth;
   protected float CeilingHeight;
-  protected float CellPadding;
 
   protected static readonly Vector2 nwDirection = new Vector2(-1, -1);
   protected static readonly Vector2 neDirection = new Vector2(1, -1);
@@ -33,12 +32,11 @@ public class WallBuilder {
       {"channels", Resources.Load("SewerWater") as Material}
     }},
   };
-  public WallBuilder(Maze maze, MazeConfig config) {
+  public WallBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight) {
     this.maze = maze;
-    this.CellSize = config.CellSize;
-    this.MinWidth = config.MinWidth;
-    this.CeilingHeight = config.CeilingHeight;
-    this.CellPadding = config.CellPadding;
+    this.CellSize = CellSize;
+    this.MinWidth = MinWidth;
+    this.CeilingHeight = CeilingHeight;
   }
 
   protected Vector2 worldPosition(

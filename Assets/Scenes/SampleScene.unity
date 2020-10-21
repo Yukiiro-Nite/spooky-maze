@@ -959,8 +959,6 @@ MonoBehaviour:
   CeilingHeight: 2.5
   CellSize: 5
   MinWidth: 1
-  CellPadding: 0
-  RenderDepth: 5
 --- !u!4 &1375822367
 Transform:
   m_ObjectHideFlags: 0
