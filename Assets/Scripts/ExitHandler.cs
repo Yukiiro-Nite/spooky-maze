@@ -3,11 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 using Valve.VR;
 using Valve.VR.InteractionSystem;
-
+using UnityEngine.SceneManagement;
 public class ExitHandler : MonoBehaviour {
   private MapManager mapManager;
   private AudioSource audio;
   private bool exiting = false;
+  public float TransitionTime = 3.0f;
+  public string NextScene;
   void Start() {
     mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
     audio = GetComponent<AudioSource>();
@@ -25,7 +27,6 @@ public class ExitHandler : MonoBehaviour {
     GrabTypes grabType = hand.GetGrabStarting();
 
     if(grabType != GrabTypes.None && !exiting) {
-      Debug.Log("Creating new maze");
       DoExit();
     }
   }
@@ -33,13 +34,13 @@ public class ExitHandler : MonoBehaviour {
   private void DoExit() {
     exiting = true;
     audio.Play();
-    StartCoroutine(Wait(3.0f));
+    StartCoroutine(TransitionScene(TransitionTime, NextScene));
   }
  
-  private IEnumerator Wait(float seconds) {
+  private IEnumerator TransitionScene(float seconds, string nextScene) {
       yield return new WaitForSeconds(seconds);
-      mapManager.InitializeMaze();
-
       exiting = false;
+      // SceneManager.LoadSceneAsync(nextScene, LoadSceneMode.Single);
+      SteamVR_LoadLevel.Begin(nextScene);
   }
 }

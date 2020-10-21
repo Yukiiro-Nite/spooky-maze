@@ -6,7 +6,7 @@ using UnityEngine;
 public class SewerBuilder : WallBuilder {
   public float channelWidth = 0.5f;
   public float channelDepth = -0.05f;
-  public SewerBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight): base(maze, CellSize, MinWidth, CeilingHeight) {}
+  public SewerBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight, float CellPadding): base(maze, CellSize, MinWidth, CeilingHeight, CellPadding) {}
 
   public override void BuildMaze(Cell cell, int depth) {
     Dictionary<Cell, int> visited = new Dictionary<Cell, int>();

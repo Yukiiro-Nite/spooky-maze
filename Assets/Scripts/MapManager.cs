@@ -10,6 +10,8 @@ public class MapManager : MonoBehaviour {
   public float CeilingHeight = 2.5f;
   public float CellSize = 3f;
   public float MinWidth = 1f;
+  public float CellPadding = 0f;
+  public int RenderDepth = 5;
   private Maze maze;
   private static readonly Dictionary<string, string> nextType = new Dictionary<string, string> {
     {"cave", "sewer"},
@@ -32,24 +34,21 @@ public class MapManager : MonoBehaviour {
       2. add maze to scene
       3. move player to maze start
     */
-    Maze maze = MazeGenerator.generate(Width, Height, GetNextMazeType());
-    WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight);
-    wallBuilder.BuildMaze(maze.getCell(0, 0), 5);
+    this.maze = MazeGenerator.generate(Width, Height, GetNextMazeType());
+    WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
 
     GameObject player = GameObject.Find("Player");
     GameObject exit = GameObject.Find("Exit");
 
-    player.transform.position = new Vector3(maze.start.x * CellSize, 0f, maze.start.y * CellSize);
-    exit.transform.position = new Vector3(maze.end.x * CellSize, CeilingHeight, maze.end.y * CellSize);
-
-    this.maze = maze;
+    wallBuilder.PlaceObject(player, maze.start, 0f);
+    wallBuilder.PlaceObject(exit, maze.end, CeilingHeight);
   }
 
   public void UpdateMaze(int x, int y) {
     ClearMaze();
 
-    WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight);
-    wallBuilder.BuildMaze(maze.getCell(x, y), 5);
+    WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
+    wallBuilder.BuildMaze(maze.getCell(x, y), RenderDepth);
   }
 
   public void ClearMaze() {
@@ -65,11 +64,11 @@ public class MapManager : MonoBehaviour {
       : nextType[this.maze.type];
   }
 
-  public WallBuilder GetBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight) {
+  public WallBuilder GetBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight, float CellPadding) {
     switch(maze.type) {
-      case "cave": return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
-      case "sewer": return new SewerBuilder(maze, CellSize, MinWidth, CeilingHeight);
-      default: return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight);
+      case "cave": return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
+      case "sewer": return new SewerBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
+      default: return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
     }
   }
 }
