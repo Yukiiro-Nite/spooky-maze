@@ -6,6 +6,11 @@ EditorBuildSettings:
   serializedVersion: 2
   m_Scenes:
   - enabled: 1
-    path: Assets/Scenes/SampleScene.unity
+    path: Assets/Scenes/CaveScene.unity
     guid: 9fc0d4010bbf28b4594072e72b8655ab
-  m_configObjects: {}
+  - enabled: 1
+    path: Assets/Scenes/SewerScene.unity
+    guid: ced13af5429fb38468160699972de669
+  m_configObjects:
+    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 27434f95165a5b0479d06126f266199b,
+      type: 2}

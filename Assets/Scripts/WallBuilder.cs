@@ -8,6 +8,7 @@ public class WallBuilder {
   protected float CellSize;
   protected float MinWidth;
   protected float CeilingHeight;
+  protected float CellPadding;
 
   protected static readonly Vector2 nwDirection = new Vector2(-1, -1);
   protected static readonly Vector2 neDirection = new Vector2(1, -1);
@@ -32,11 +33,12 @@ public class WallBuilder {
       {"channels", Resources.Load("SewerWater") as Material}
     }},
   };
-  public WallBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight) {
+  public WallBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight, float CellPadding) {
     this.maze = maze;
     this.CellSize = CellSize;
     this.MinWidth = MinWidth;
     this.CeilingHeight = CeilingHeight;
+    this.CellPadding = CellPadding;
   }
 
   protected Vector2 worldPosition(
@@ -80,6 +82,10 @@ public class WallBuilder {
     Rigidbody body = gameObject.AddComponent<Rigidbody>();
 
     body.isKinematic = true;
+
+    if(name == "walls") {
+      gameObject.layer = 10;
+    }
 
   }
 
@@ -296,5 +302,9 @@ public class WallBuilder {
         {"back", true},
         {"left", false},
       };
+  }
+
+  public void PlaceObject(GameObject obj, Vector2 mazePos, float height) {
+    obj.transform.position = new Vector3(mazePos.x * CellSize, height, mazePos.y * CellSize);
   }
 }
