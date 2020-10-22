@@ -1,22 +1,50 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using Valve.VR;
-using Valve.VR.InteractionSystem;
+using UnityEngine.XR;
+using UnityEngine.XR.Interaction.Toolkit;
 
 public class PlayerController : MonoBehaviour {
-  public SteamVR_Action_Vector2 touchpadInput;
-  private CapsuleCollider playerCollider;
+  public float speed = 2f;
+  public XRNode InputSrc;
+  public LayerMask groundLayer;
+  private XRRig rig;
+  private CharacterController player;
+  private Vector2 inputAxis;
+  private float fallingSpeed = 0f;
   void Start() {
-    playerCollider = GetComponent<CapsuleCollider>();
+    player = GetComponent<CharacterController>();
+    rig = GetComponent<XRRig>();
+  }
+
+  void Update() {
+    InputDevice device = InputDevices.GetDeviceAtXRNode(InputSrc);
+    device.TryGetFeatureValue(CommonUsages.primary2DAxis, out inputAxis);
   }
 
   void FixedUpdate() {
-    Vector3 dir = Player.instance.hmdTransform.TransformDirection(new Vector3(touchpadInput.axis.x, 0, touchpadInput.axis.y));
-    transform.position += Vector3.ProjectOnPlane(Time.deltaTime * dir * 2.0f, Vector3.up);
+    FollowHeadset();
+    Quaternion headYaw = Quaternion.Euler(0, rig.cameraGameObject.transform.eulerAngles.y, 0);
+    Vector3 dir = headYaw * new Vector3(inputAxis.x, 0, inputAxis.y);
+    player.Move(dir * Time.fixedDeltaTime * speed);
+    
+    fallingSpeed = IsGrounded()
+      ? 0
+      : fallingSpeed += Physics.gravity.y * Time.fixedDeltaTime;
+    
+    player.Move(Vector3.up * fallingSpeed * Time.fixedDeltaTime);
+  }
 
-    float distanceFromFloor = Vector3.Dot(Camera.main.transform.localPosition, Vector3.up);
-    playerCollider.height = Mathf.Max(playerCollider.radius, distanceFromFloor + 0.2f);
-    playerCollider.center = Camera.main.transform.localPosition - 0.5f * distanceFromFloor * Vector3.up;
+  void FollowHeadset() {
+    player.height = rig.cameraInRigSpaceHeight + 0.2f;
+    Vector3 center = transform.InverseTransformPoint(rig.cameraGameObject.transform.position);
+    player.center = new Vector3(center.x, player.height / 2f + player.skinWidth, center.z);
+  }
+
+  bool IsGrounded() {
+    Vector3 rayStart = transform.TransformPoint(player.center);
+    float rayLength = player.center.y + 0.01f;
+    bool hit = Physics.SphereCast(rayStart, player.radius, Vector3.down, out RaycastHit hitInfo, rayLength, groundLayer);
+    return hit;
   }
 }

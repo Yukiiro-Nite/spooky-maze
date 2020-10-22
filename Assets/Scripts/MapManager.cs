@@ -12,6 +12,8 @@ public class MapManager : MonoBehaviour {
   public float MinWidth = 1f;
   public float CellPadding = 0f;
   public int RenderDepth = 5;
+  public GameObject Player;
+  public GameObject Exit;
   private Maze maze;
   private static readonly Dictionary<string, string> nextType = new Dictionary<string, string> {
     {"cave", "sewer"},
@@ -37,11 +39,8 @@ public class MapManager : MonoBehaviour {
     this.maze = MazeGenerator.generate(Width, Height, GetNextMazeType());
     WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
 
-    GameObject player = GameObject.Find("Player");
-    GameObject exit = GameObject.Find("Exit");
-
-    wallBuilder.PlaceObject(player, maze.start, 0f);
-    wallBuilder.PlaceObject(exit, maze.end, CeilingHeight);
+    wallBuilder.PlaceObject(Player, maze.start, 0f);
+    wallBuilder.PlaceObject(Exit, maze.end, CeilingHeight);
   }
 
   public void UpdateMaze(int x, int y) {

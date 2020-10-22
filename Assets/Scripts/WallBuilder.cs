@@ -83,6 +83,10 @@ public class WallBuilder {
 
     body.isKinematic = true;
 
+    if(name == "walls") {
+      gameObject.layer = 10;
+    }
+
   }
 
   protected CombineInstance[] GetCombineInstances(List<Mesh> meshes) {
