@@ -9,11 +9,11 @@ public class PlayerController : MonoBehaviour {
   public XRNode InputSrc;
   public LayerMask groundLayer;
   private XRRig rig;
-  private CharacterController player;
+  private CapsuleCollider player;
   private Vector2 inputAxis;
   private float fallingSpeed = 0f;
   void Start() {
-    player = GetComponent<CharacterController>();
+    player = GetComponent<CapsuleCollider>();
     rig = GetComponent<XRRig>();
   }
 
@@ -26,25 +26,35 @@ public class PlayerController : MonoBehaviour {
     FollowHeadset();
     Quaternion headYaw = Quaternion.Euler(0, rig.cameraGameObject.transform.eulerAngles.y, 0);
     Vector3 dir = headYaw * new Vector3(inputAxis.x, 0, inputAxis.y);
-    player.Move(dir * Time.fixedDeltaTime * speed);
-    
-    fallingSpeed = IsGrounded()
-      ? 0
-      : fallingSpeed += Physics.gravity.y * Time.fixedDeltaTime;
-    
-    player.Move(Vector3.up * fallingSpeed * Time.fixedDeltaTime);
+    if(!WillCollide(dir)) {
+      transform.position += dir * Time.fixedDeltaTime * speed;
+    } else {
+      Debug.Log("Got a collision!");  
+    }
   }
 
   void FollowHeadset() {
     player.height = rig.cameraInRigSpaceHeight + 0.2f;
-    Vector3 center = transform.InverseTransformPoint(rig.cameraGameObject.transform.position);
-    player.center = new Vector3(center.x, player.height / 2f + player.skinWidth, center.z);
+    Vector3 localCameraPos = rig.cameraInRigSpacePos;
+    player.center = new Vector3(localCameraPos.x, player.height / 2, localCameraPos.z);
   }
 
-  bool IsGrounded() {
-    Vector3 rayStart = transform.TransformPoint(player.center);
-    float rayLength = player.center.y + 0.01f;
-    bool hit = Physics.SphereCast(rayStart, player.radius, Vector3.down, out RaycastHit hitInfo, rayLength, groundLayer);
-    return hit;
+  bool WillCollide(Vector3 dir) {
+    Vector3 rayOrigin = Camera.main.transform.position - dir.normalized * player.radius;
+    LayerMask notPlayer = ~LayerMask.GetMask("Player");
+    return Physics.SphereCast(
+      rayOrigin,
+      0.1f,
+      dir,
+      out RaycastHit hit,
+      player.radius * 2,
+      notPlayer
+    );
+    // return Physics.Raycast(
+    //   rayOrigin,
+    //   dir,
+    //   player.radius * 2,
+    //   notPlayer
+    // );
   }
 }

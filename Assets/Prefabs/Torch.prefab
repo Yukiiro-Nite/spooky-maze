@@ -14,7 +14,7 @@ GameObject:
   - component: {fileID: 9056044776834460670}
   - component: {fileID: 4370076277786755535}
   - component: {fileID: 1944908774112637653}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: TorchTip
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4825,7 +4825,7 @@ CapsuleCollider:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2171581423893697833}
   m_Material: {fileID: 0}
-  m_IsTrigger: 0
+  m_IsTrigger: 1
   m_Enabled: 1
   m_Radius: 0.9930389
   m_Height: 14.742588
@@ -4840,9 +4840,8 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4968129119220166303}
-  - component: {fileID: 4968129119220166300}
   - component: {fileID: 1017770330291185600}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Torch
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -4865,22 +4864,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 180, z: 0}
---- !u!54 &4968129119220166300
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 4968129119220166301}
-  serializedVersion: 2
-  m_Mass: 1
-  m_Drag: 0
-  m_AngularDrag: 0.05
-  m_UseGravity: 0
-  m_IsKinematic: 1
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!82 &1017770330291185600
 AudioSource:
   m_ObjectHideFlags: 0
@@ -4890,8 +4873,7 @@ AudioSource:
   m_GameObject: {fileID: 4968129119220166301}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 243366450046692526, guid: ec12f7772c03e4c4c9e4c2f1643595ad,
-    type: 2}
+  OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 7b00dde189d7cdd45bf276eb965d43e4, type: 3}
   m_PlayOnAwake: 1
   m_Volume: 0.5
@@ -4989,7 +4971,7 @@ GameObject:
   - component: {fileID: 4968129119749899256}
   - component: {fileID: 4968129119749899258}
   - component: {fileID: 4968129119749899259}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Point Light
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -5162,6 +5144,11 @@ PrefabInstance:
       propertyPath: m_LocalScale.z
       value: 0.075
       objectReference: {fileID: 0}
+    - target: {fileID: 3144078099594604386, guid: f817fd1388d7e0346ac99e1e7c1c986a,
+        type: 3}
+      propertyPath: m_SelectedEditorRenderState
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 3160488702567065602, guid: f817fd1388d7e0346ac99e1e7c1c986a,
         type: 3}
       propertyPath: m_Name
@@ -5170,7 +5157,7 @@ PrefabInstance:
     - target: {fileID: 3160488702567065602, guid: f817fd1388d7e0346ac99e1e7c1c986a,
         type: 3}
       propertyPath: m_Layer
-      value: 0
+      value: 8
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: f817fd1388d7e0346ac99e1e7c1c986a, type: 3}

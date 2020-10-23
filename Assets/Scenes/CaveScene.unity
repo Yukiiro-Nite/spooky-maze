@@ -341,7 +341,7 @@ GameObject:
   - component: {fileID: 1069874404}
   - component: {fileID: 1069874401}
   - component: {fileID: 1069874400}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: LeftHand Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -640,9 +640,10 @@ GameObject:
   - component: {fileID: 1170473686}
   - component: {fileID: 1170473688}
   - component: {fileID: 1170473690}
-  - component: {fileID: 1170473689}
   - component: {fileID: 1170473691}
-  m_Layer: 0
+  - component: {fileID: 1170473692}
+  - component: {fileID: 1170473693}
+  m_Layer: 8
   m_Name: XR Rig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -694,24 +695,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a150a71117d62f141a561c496c1a9a3b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
---- !u!143 &1170473689
-CharacterController:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1170473685}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Height: 1.5
-  m_Radius: 0.25
-  m_SlopeLimit: 45
-  m_StepOffset: 0.3
-  m_SkinWidth: 0.08
-  m_MinMoveDistance: 0.001
-  m_Center: {x: 0, y: 0.75, z: 0}
 --- !u!114 &1170473690
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -748,6 +731,36 @@ MonoBehaviour:
   m_TurnAmount: 45
   m_DebounceTime: 0.2
   m_DeadZone: 0.75
+--- !u!54 &1170473692
+Rigidbody:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1170473685}
+  serializedVersion: 2
+  m_Mass: 1
+  m_Drag: 0
+  m_AngularDrag: 0.05
+  m_UseGravity: 1
+  m_IsKinematic: 0
+  m_Interpolate: 0
+  m_Constraints: 112
+  m_CollisionDetection: 1
+--- !u!136 &1170473693
+CapsuleCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1170473685}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  m_Radius: 0.25
+  m_Height: 1.5
+  m_Direction: 1
+  m_Center: {x: 0, y: 0.75, z: 0}
 --- !u!4 &1228380323 stripped
 Transform:
   m_CorrespondingSourceObject: {fileID: 4968129119220166303, guid: fc86aff990084be408a760c270ea341d,
@@ -767,7 +780,7 @@ GameObject:
   - component: {fileID: 1241207319}
   - component: {fileID: 1241207316}
   - component: {fileID: 1241207315}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: RightHand Controller
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1037,7 +1050,7 @@ GameObject:
   - component: {fileID: 1626720550}
   - component: {fileID: 1626720549}
   - component: {fileID: 1626720552}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Main Camera
   m_TagString: MainCamera
   m_Icon: {fileID: 0}
@@ -1205,7 +1218,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2079452679}
-  m_Layer: 0
+  m_Layer: 8
   m_Name: Camera Offset
   m_TagString: Untagged
   m_Icon: {fileID: 0}
