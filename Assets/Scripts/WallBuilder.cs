@@ -20,19 +20,6 @@ public class WallBuilder {
     "south",
     "west"
   };
-  protected static readonly Dictionary<String, Dictionary<String, Material>> materials = new Dictionary<string, Dictionary<string, Material>> {
-    {"cave", new Dictionary<string, Material> {
-      {"floors", Resources.Load("CaveFloor") as Material},
-      {"walls", Resources.Load("CaveWall") as Material},
-      {"ceilings", Resources.Load("CaveWall") as Material}
-    }},
-    {"sewer", new Dictionary<string, Material> {
-      {"floors", Resources.Load("Concrete") as Material},
-      {"walls", Resources.Load("Concrete") as Material},
-      {"ceilings", Resources.Load("Concrete") as Material},
-      {"channels", Resources.Load("SewerWater") as Material}
-    }},
-  };
   public WallBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight, float CellPadding) {
     this.maze = maze;
     this.CellSize = CellSize;
@@ -66,7 +53,7 @@ public class WallBuilder {
   }
 
   protected void CreateObject(string name, List<Mesh> meshes, string zoneType) {
-    Material material = GetMaterial(zoneType, name);
+    Material material = MaterialMap.Get(zoneType, name);
     GameObject gameObject = new GameObject(name);
     MeshRenderer meshRenderer = gameObject.AddComponent<MeshRenderer>();
     meshRenderer.sharedMaterial = material;
@@ -254,10 +241,6 @@ public class WallBuilder {
       new Vector3(farRight.x, CeilingHeight, farRight.y),
       new Vector3(farLeft.x, CeilingHeight, farLeft.y)
     ));
-  }
-
-  protected Material GetMaterial(String zoneType, String faceType) {
-    return materials[zoneType][faceType];
   }
 
   protected Dictionary<string, bool> GetDirections(Cell cell, string direction) {
