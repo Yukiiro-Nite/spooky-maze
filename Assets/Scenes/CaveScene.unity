@@ -923,6 +923,11 @@ PrefabInstance:
       propertyPath: audioClips.Array.data[0]
       value: 
       objectReference: {fileID: 8300000, guid: d634367476f71cd46a75fa4a6c918d0c, type: 3}
+    - target: {fileID: 6540538988463443844, guid: 8948e8e8abc7dff43b7207ddce77f48c,
+        type: 3}
+      propertyPath: frequency
+      value: 0.02
+      objectReference: {fileID: 0}
     - target: {fileID: 7789530636240427475, guid: 8948e8e8abc7dff43b7207ddce77f48c,
         type: 3}
       propertyPath: m_Name
@@ -1207,7 +1212,18 @@ PrefabInstance:
       propertyPath: m_Name
       value: FootSteps
       objectReference: {fileID: 0}
-    m_RemovedComponents: []
+    - target: {fileID: 7073429101628800847, guid: 105d7358fc7595d49911779c724734d4,
+        type: 3}
+      propertyPath: audioClips.Array.size
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7073429101628800847, guid: 105d7358fc7595d49911779c724734d4,
+        type: 3}
+      propertyPath: audioClips.Array.data[0]
+      value: 
+      objectReference: {fileID: 8300000, guid: 3a38e13b7982bdd41a6eaf305c14bd01, type: 3}
+    m_RemovedComponents:
+    - {fileID: 7073429101628800846, guid: 105d7358fc7595d49911779c724734d4, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 105d7358fc7595d49911779c724734d4, type: 3}
 --- !u!1 &2079452678
 GameObject:

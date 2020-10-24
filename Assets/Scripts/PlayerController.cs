@@ -50,11 +50,5 @@ public class PlayerController : MonoBehaviour {
       player.radius * 2,
       notPlayer
     );
-    // return Physics.Raycast(
-    //   rayOrigin,
-    //   dir,
-    //   player.radius * 2,
-    //   notPlayer
-    // );
   }
 }
