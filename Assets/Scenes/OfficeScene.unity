@@ -971,7 +971,7 @@ PrefabInstance:
     - target: {fileID: 2527777758150428460, guid: 17093944688868843b40bab80a92b4a1,
         type: 3}
       propertyPath: m_Center.y
-      value: -0.55
+      value: -0.5
       objectReference: {fileID: 0}
     - target: {fileID: 2527777758150428461, guid: 17093944688868843b40bab80a92b4a1,
         type: 3}

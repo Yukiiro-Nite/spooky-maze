@@ -125,35 +125,12 @@ public class OfficeBuilder : WallBuilder {
 
     if(dir == "north") {
       BuildOfficePath(ac, a1, a12, a21, a2, bc, b0, b03, b30, b3, nDirection, meshes);
-      // bool LRPath = avg(a1.x, a2.x) <= avg(b0.x, b3.x);
-      // Vector2 h0 = new Vector2(a1.x, HallPos(ac, nDirection).y);
-      // Vector2 h1 = h0 + nDirection * hallWidth;
-      // Vector2 h2 = new Vector2(b3.x, HallPos(bc, sDirection).y);
-      // Vector2 h3 = h2 + sDirection * hallWidth;
-      // if(LRPath) {
-      //   meshes["floor"].Add(QuadFromPoints(a1, h0, h0 + eDirection * hallWidth, a1 + eDirection * hallWidth, 0));
-      //   meshes["floor"].Add(QuadFromPoints(h0, h1, h2, h3, 0));
-      //   meshes["floor"].Add(QuadFromPoints(b3, h2, h2 + wDirection * hallWidth, b3 + wDirection * hallWidth, 0));
-
-      //   meshes["ceiling"].Add(QuadFromPoints(a1, a1 + eDirection * hallWidth, h0 + eDirection * hallWidth, h0, CeilingHeight));
-      //   meshes["ceiling"].Add(QuadFromPoints(h0, h3, h2, h1, CeilingHeight));
-      //   meshes["ceiling"].Add(QuadFromPoints(b3, b3 + wDirection * hallWidth, h2 + wDirection * hallWidth, h2, CeilingHeight));
-
-      //   meshes["wall"].Add(WallQuad(a1, h1, CeilingHeight, 0));
-      //   meshes["wall"].Add(WallQuad(h1, h2 + wDirection * hallWidth, CeilingHeight, 0));
-      //   meshes["wall"].Add(WallQuad(h2 + wDirection * hallWidth, b3 + wDirection * hallWidth, CeilingHeight, 0));
-      //   meshes["wall"].Add(WallQuad(b3, h3, CeilingHeight, 0));
-      //   meshes["wall"].Add(WallQuad(h3, h0 + eDirection * hallWidth, CeilingHeight, 0));
-      //   meshes["wall"].Add(WallQuad(h0 + eDirection * hallWidth, a1 + eDirection * hallWidth, CeilingHeight, 0));
-      // } else {
-
-      // }
     } else if(dir == "east") {
-      // BuildOfficePath(ac, a2, a23, a32, a3, bc, b1, b10, b01, b0, eDirection, meshes);
+      BuildOfficePath(ac, a2, a23, a32, a3, bc, b1, b10, b01, b0, eDirection, meshes);
     } else if(dir == "south") {
-      BuildOfficePath(ac, a0, a03, a30, a3, bc, b1, b12, b21, b2, sDirection, meshes);
+      BuildOfficePath(ac, a3, a30, a03, a0, bc, b2, b21, b12, b1, sDirection, meshes);
     } else if(dir == "west") {
-      // BuildOfficePath(ac, a1, a10, a01, a0, bc, b2, b23, b32, b3, wDirection, meshes);
+      BuildOfficePath(ac, a0, a01, a10, a1, bc, b3, b32, b23, b2, wDirection, meshes);
     }
   }
 
@@ -175,19 +152,22 @@ public class OfficeBuilder : WallBuilder {
     Vector2 left = rotate(dir, -Mathf.PI / 2f);
     Vector2 down = rotate(dir, Mathf.PI);
     Vector2 right = rotate(dir, Mathf.PI / 2f);
+
     Vector2 upOff = up * hallWidth;
     Vector2 leftOff = left * hallWidth;
     Vector2 downOff = down * hallWidth;
     Vector2 rightOff = right * hallWidth;
-    bool LRPath = avg((a1 * right).magnitude, (a2 * right).magnitude)
-      <= avg((b0 * right).magnitude, (b3 * right).magnitude);
+
+    bool LRPath = IsALeftOfB(
+      a1 + ((a2-a1) / 2f),
+      b0 + ((b3-b0) / 2f),
+      up
+    );
 
     if(LRPath) {
-      // Vector2 h0 = HallPos(ac, up) + (ac * right - a1 * right);
-      Vector2 h0 = new Vector2(a1.x, HallPos(ac, up).y);
+      Vector2 h0 = HallPos(ac, up) * Abs(up) + a1 * Abs(right);
       Vector2 h1 = h0 + upOff;
-      // Vector2 h2 = HallPos(bc, down) + (bc * right - b3 * right);
-      Vector2 h2 = new Vector2(b3.x, HallPos(bc, down).y);
+      Vector2 h2 = HallPos(bc, down) * Abs(down) + b3 * Abs(right);
       Vector2 h3 = h2 + downOff;
 
       Vector2 h03 = h0 + rightOff;
@@ -208,11 +188,9 @@ public class OfficeBuilder : WallBuilder {
         b3, h3, h03, a1 + rightOff, a12, a21, a2
       }, CeilingHeight, 0, meshes);
     } else {
-      // Vector2 h3 = HallPos(ac, up) + (ac * right - a2 * right);
-      Vector2 h3 = new Vector2(a2.x, HallPos(ac, up).y);
+      Vector2 h3 = HallPos(ac, up) * Abs(up) + a2 * Abs(right);
       Vector2 h2 = h3 + upOff;
-      // Vector2 h1 = HallPos(bc, up) + (bc * right - b0 * right);
-      Vector2 h1 = new Vector2(b0.x, HallPos(bc, down).y);
+      Vector2 h1 = HallPos(bc, down) * Abs(down) + b0 * Abs(right);
       Vector2 h0 = h1 + downOff;
 
       Vector2 h30 = h3 + leftOff;
@@ -252,6 +230,13 @@ public class OfficeBuilder : WallBuilder {
     float magnitude = v.magnitude;
     float a = theta + angle;
     return new Vector2(Mathf.Cos(a), Mathf.Sin(a)) * magnitude;
+  }
+
+  private bool IsALeftOfB(Vector2 a, Vector2 b, Vector2 dir) {
+    float rotation = Mathf.PI / 2f - Mathf.Atan2(dir.y, dir.x);
+    a = rotate(a, rotation);
+    b = rotate(b, rotation);
+    return a.x < b.x;
   }
   
   protected override void Floor(Vector2 nearLeft, Vector2 farLeft, Vector2 farRight, Vector2 nearRight, Dictionary<string, List<Mesh>> meshes, Dictionary<string, bool> dir) {
