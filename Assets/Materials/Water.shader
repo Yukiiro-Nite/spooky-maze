@@ -3,6 +3,7 @@ Shader "Custom/Water"
     Properties
     {
         _Color ("Color", Color) = (1,1,1,1)
+        _FoamColor ("Foam Color", Color) = (1, 1, 1, 1)
         _Depth ("Depth", Range(0,1)) = 1.0
         _Scale ("Scale", Vector) = (1.0, 1.0, 1.0)
         _Glossiness ("Smoothness", Range(0,1)) = 0.5
@@ -31,6 +32,7 @@ Shader "Custom/Water"
         half _Metallic;
         half _Jitter;
         fixed4 _Color;
+        fixed4 _FoamColor;
         float3 _Scale;
 
         // Add instancing support for this shader. You need to check 'Enable Instancing' on materials that use the shader.
@@ -308,8 +310,8 @@ Shader "Custom/Water"
             float3 pos = (IN.worldPos + float3(noise1, 0.0, noise2) + float3(_SinTime.z, 0, _CosTime.z) / 32.0) * _Scale;
             float baseNoise = 1.0 - min(cellular(pos), _Depth);
             // Albedo comes from a texture tinted by color
-            float foam = smoothstep(0.95, 1.0, pow(baseNoise, 0.5));
-            fixed4 c = lerp(_Color, fixed4(1.0, 1.0, 1.0, 1.0), foam);
+            float foamMap = smoothstep(0.95, 1.0, pow(baseNoise, 0.5));
+            fixed4 c = lerp(_Color, _FoamColor, foamMap);
             o.Albedo = c.rgb;
             o.Occlusion = baseNoise;
             // o.Normal = calculateNormal(pos);
