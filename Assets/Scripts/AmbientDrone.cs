@@ -37,6 +37,9 @@ public class AmbientDrone : MonoBehaviour
 
     private AudioClip GetNextClip()
     {
+        if(audioClips.Count == 1) {
+            return audioClips[0];
+        }
         int nextIndex = Random.Range(0, audioClips.Count - 1);
         clipIndex = nextIndex < clipIndex
             ? nextIndex

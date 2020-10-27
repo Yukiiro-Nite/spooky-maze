@@ -366,7 +366,7 @@ PrefabInstance:
     - target: {fileID: 6540538988463443844, guid: 8948e8e8abc7dff43b7207ddce77f48c,
         type: 3}
       propertyPath: audioClips.Array.size
-      value: 3
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6540538988463443844, guid: 8948e8e8abc7dff43b7207ddce77f48c,
         type: 3}
@@ -402,6 +402,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_Name
       value: AmbientEffects
+      objectReference: {fileID: 0}
+    - target: {fileID: 7789530636240427475, guid: 8948e8e8abc7dff43b7207ddce77f48c,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 9131763023574743358, guid: 8948e8e8abc7dff43b7207ddce77f48c,
         type: 3}
@@ -717,28 +722,43 @@ PrefabInstance:
     - target: {fileID: 7073429101628800847, guid: 105d7358fc7595d49911779c724734d4,
         type: 3}
       propertyPath: audioClips.Array.size
-      value: 3
+      value: 4
       objectReference: {fileID: 0}
     - target: {fileID: 7073429101628800847, guid: 105d7358fc7595d49911779c724734d4,
         type: 3}
       propertyPath: audioClips.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: ac5cffa820c759a4da3c5dc96f9957b8, type: 3}
+      objectReference: {fileID: 8300000, guid: 84ded0ef61b7868449ed8114cdeb0097, type: 3}
     - target: {fileID: 7073429101628800847, guid: 105d7358fc7595d49911779c724734d4,
         type: 3}
       propertyPath: audioClips.Array.data[1]
       value: 
-      objectReference: {fileID: 8300000, guid: 4e011a628ad3fb3449c1c17af40c9d8c, type: 3}
+      objectReference: {fileID: 8300000, guid: 9d759f8cc2ca9294da0d2f1918494dbf, type: 3}
     - target: {fileID: 7073429101628800847, guid: 105d7358fc7595d49911779c724734d4,
         type: 3}
       propertyPath: maxVolume
-      value: 0.8
+      value: 0.125
       objectReference: {fileID: 0}
     - target: {fileID: 7073429101628800847, guid: 105d7358fc7595d49911779c724734d4,
         type: 3}
       propertyPath: audioClips.Array.data[2]
       value: 
-      objectReference: {fileID: 8300000, guid: f319d89aba0ae6a4690cbf0d190e1efd, type: 3}
+      objectReference: {fileID: 8300000, guid: 21d663e051ad9bf4d944d2b8c37df732, type: 3}
+    - target: {fileID: 7073429101628800847, guid: 105d7358fc7595d49911779c724734d4,
+        type: 3}
+      propertyPath: audioClips.Array.data[3]
+      value: 
+      objectReference: {fileID: 8300000, guid: 45fee79a7d15624459f08b380c29df07, type: 3}
+    - target: {fileID: 7073429101628800847, guid: 105d7358fc7595d49911779c724734d4,
+        type: 3}
+      propertyPath: minVolume
+      value: 0.075
+      objectReference: {fileID: 0}
+    - target: {fileID: 7073429101628800847, guid: 105d7358fc7595d49911779c724734d4,
+        type: 3}
+      propertyPath: maxPitch
+      value: 1
+      objectReference: {fileID: 0}
     m_RemovedComponents:
     - {fileID: 7073429101628800846, guid: 105d7358fc7595d49911779c724734d4, type: 3}
   m_SourcePrefab: {fileID: 100100000, guid: 105d7358fc7595d49911779c724734d4, type: 3}
@@ -807,22 +827,32 @@ PrefabInstance:
     - target: {fileID: 5947127111094451444, guid: bb1f54c9c206e02419227c782d29732e,
         type: 3}
       propertyPath: audioClips.Array.size
-      value: 2
+      value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 5947127111094451444, guid: bb1f54c9c206e02419227c782d29732e,
         type: 3}
       propertyPath: audioClips.Array.data[0]
       value: 
-      objectReference: {fileID: 8300000, guid: a01cac616495e6a44a2ad8a977a850c8, type: 3}
+      objectReference: {fileID: 8300000, guid: 7fed42e6e8fda364fb08c0e74db8d2d8, type: 3}
     - target: {fileID: 5947127111094451444, guid: bb1f54c9c206e02419227c782d29732e,
         type: 3}
       propertyPath: audioClips.Array.data[1]
       value: 
       objectReference: {fileID: 8300000, guid: f8bed1fde3135d34599afcb3a1d958f6, type: 3}
+    - target: {fileID: 5947127111094451444, guid: bb1f54c9c206e02419227c782d29732e,
+        type: 3}
+      propertyPath: fadeTime
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5947127111094451445, guid: bb1f54c9c206e02419227c782d29732e,
         type: 3}
       propertyPath: m_Name
       value: AmbientCaveDrone
+      objectReference: {fileID: 0}
+    - target: {fileID: 5947127111094451445, guid: bb1f54c9c206e02419227c782d29732e,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
       objectReference: {fileID: 0}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: bb1f54c9c206e02419227c782d29732e, type: 3}
@@ -1287,10 +1317,10 @@ MonoBehaviour:
   Width: 5
   Height: 5
   CeilingHeight: 2.5
-  CellSize: 6
-  MinWidth: 2.5
+  CellSize: 7
+  MinWidth: 3
   CellPadding: 3
-  RenderDepth: 7
+  RenderDepth: 2
   Player: {fileID: 179708468}
   Exit: {fileID: 2049260685}
 --- !u!4 &1900918752
