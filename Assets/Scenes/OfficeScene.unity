@@ -1283,13 +1283,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7c5dc147a88659c439ff01061c041ea0, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  defaultType: sewer
+  defaultType: office
   Width: 5
   Height: 5
   CeilingHeight: 2.5
-  CellSize: 2.5
-  MinWidth: 2.25
-  CellPadding: 1
+  CellSize: 6
+  MinWidth: 2.5
+  CellPadding: 3
   RenderDepth: 7
   Player: {fileID: 179708468}
   Exit: {fileID: 2049260685}
@@ -1377,7 +1377,7 @@ PrefabInstance:
     - target: {fileID: 5769388610383577882, guid: e955bcafef38b50438773d4ea6234054,
         type: 3}
       propertyPath: NextScene
-      value: OfficeScene
+      value: CaveScene
       objectReference: {fileID: 0}
     - target: {fileID: 5769388610383577886, guid: e955bcafef38b50438773d4ea6234054,
         type: 3}

@@ -24,7 +24,6 @@ public class SewerBuilder : WallBuilder {
   }
 
   protected override void Floor(Vector2 nearLeft, Vector2 farLeft, Vector2 farRight, Vector2 nearRight, Dictionary<string, List<Mesh>> meshes, Dictionary<string, bool> dir) {
-    Debug.Log("Calling sewer specific floor builder");
     Channel(nearLeft, farLeft, farRight, nearRight, meshes, dir);
   }
 

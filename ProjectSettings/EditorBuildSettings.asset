@@ -7,10 +7,11 @@ EditorBuildSettings:
   m_Scenes:
   - enabled: 1
     path: Assets/Scenes/CaveScene.unity
-    guid: 9fc0d4010bbf28b4594072e72b8655ab
+    guid: 71baf72c8fd3f9a41a9806a7a73f20a8
   - enabled: 1
     path: Assets/Scenes/SewerScene.unity
     guid: ced13af5429fb38468160699972de669
-  m_configObjects:
-    com.unity.xr.management.loader_settings: {fileID: 11400000, guid: 27434f95165a5b0479d06126f266199b,
-      type: 2}
+  - enabled: 1
+    path: Assets/Scenes/OfficeScene.unity
+    guid: 4f2403bc6ab7f9d4193a37b8bdbf63da
+  m_configObjects: {}

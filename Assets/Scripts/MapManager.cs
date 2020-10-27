@@ -67,6 +67,7 @@ public class MapManager : MonoBehaviour {
     switch(maze.type) {
       case "cave": return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
       case "sewer": return new SewerBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
+      case "office": return new OfficeBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
       default: return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
     }
   }

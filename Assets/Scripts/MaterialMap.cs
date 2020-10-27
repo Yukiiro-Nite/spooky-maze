@@ -16,6 +16,11 @@ public class MaterialMap {
       {"ceilings", Resources.Load("Brick") as Material},
       {"channels", Resources.Load("SewerWater_2") as Material}
     }},
+    {"office", new Dictionary<string, Material> {
+      {"floors", Resources.Load("OfficeFloor") as Material},
+      {"walls", Resources.Load("OfficeWall") as Material},
+      {"ceilings", Resources.Load("OfficeCeiling") as Material}
+    }},
   };
 
   public static Material Get(String zoneType, String faceType) {
