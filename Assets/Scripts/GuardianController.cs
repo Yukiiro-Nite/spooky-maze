@@ -17,12 +17,14 @@ public class GuardianController : MonoBehaviour
     private Vector3 targetPosition;
     private CapsuleCollider playerCollider;
     private SphereCollider selfCollider;
+    private SphereCollider torchCollider;
     private MapManager mapManager;
     void Start()
     {
         selfCollider = gameObject.GetComponent<SphereCollider>();
         playerCollider = GameObject.Find("XR Rig").GetComponent<CapsuleCollider>();
         mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
+        torchCollider = GameObject.Find("TorchTip").GetComponent<SphereCollider>();
         Spawn();
     }
 
@@ -40,8 +42,9 @@ public class GuardianController : MonoBehaviour
             Random.Range(0, mapManager.Width),
             Random.Range(0, mapManager.Height)
         );
+        Vector2 worldPos = mapManager.GetWorldPosition(mazePos);
         mapManager.PlaceObject(gameObject, mazePos, mapManager.CeilingHeight / 2f);
-        targetPosition = transform.position;
+        targetPosition = new Vector3(worldPos.x, mapManager.CeilingHeight / 2f, worldPos.y);
     }
 
     void Look()
@@ -60,7 +63,7 @@ public class GuardianController : MonoBehaviour
         if (hasHit) {
             currentMode = Mode.Chase;
             lastPlayerPosition = Camera.main.transform.position;
-        } else if (lastPlayerPosition.HasValue) {
+        } else if (lastPlayerPosition.HasValue && currentMode == Mode.Chase) {
             currentMode = Mode.Search;
         }
     }
@@ -82,7 +85,13 @@ public class GuardianController : MonoBehaviour
 
     void DoWonder()
     {
-
+        float distance = Vector3.Distance(transform.position, targetPosition);
+        if(distance > movementEpsillon) {
+            Vector3 dir = (targetPosition - transform.position).normalized;
+            transform.position += dir * Time.fixedDeltaTime * speed;
+        } else {
+            targetPosition = NextWonderPosition();
+        }
     }
 
     void DoChase()
@@ -102,7 +111,8 @@ public class GuardianController : MonoBehaviour
         if(distance > movementEpsillon) {
             Vector3 dir = (nextPos - transform.position).normalized;
             transform.position += dir * Time.fixedDeltaTime * speed;
-        } else if(distance <= movementEpsillon) {
+        } else {
+            Debug.Log("Switching from search to Wonder");
             targetPosition = transform.position;
             currentMode = Mode.Wonder;
         }
@@ -116,6 +126,20 @@ public class GuardianController : MonoBehaviour
                 mapManager.maze.start,
                 0f
             );
+        } else if (collision.collider == torchCollider) {
+            Spawn();
         }
+    }
+
+    Vector3 NextWonderPosition()
+    {
+        Vector2 currentPos = mapManager.GetGridPosition(gameObject);
+        Cell currentCell = mapManager.maze.getCell(currentPos);
+        List<Cell> neighbors = mapManager.maze.getConnectedNeighbors(currentCell);
+        Utils.Shuffle(neighbors);
+        Cell randomNeighbor = neighbors[Random.Range(0, neighbors.Count)];
+        Vector2 newPos = mapManager.GetWorldPosition(new Vector2(randomNeighbor.x, randomNeighbor.y));
+
+        return new Vector3(newPos.x, mapManager.CeilingHeight / 2.0f, newPos.y);
     }
 }

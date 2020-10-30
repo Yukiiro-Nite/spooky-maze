@@ -40,6 +40,7 @@ public class MapManager : MonoBehaviour {
     */
     this.maze = MazeGenerator.generate(Width, Height, GetNextMazeType());
     builder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
+    builder.BuildMaze(maze.getCell(0, 0), RenderDepth);
 
     PlaceObject(Player, maze.start, 0f);
     PlaceObject(Exit, maze.end, CeilingHeight);
@@ -84,5 +85,19 @@ public class MapManager : MonoBehaviour {
       }
       objectsToPlace.Clear();
     }
+  }
+
+  public Vector2 GetGridPosition(GameObject obj) {
+    float size = CellSize + CellPadding;
+    return new Vector2(
+      (float)Math.Ceiling((obj.transform.position.x - size /  2.0) / size),
+      (float)Math.Ceiling((obj.transform.position.z - size /  2.0) / size)
+    );
+  }
+
+  public Vector2 GetWorldPosition(Vector2 gridPosition)
+  {
+    float size = CellSize + CellPadding;
+    return gridPosition * size;
   }
 }
