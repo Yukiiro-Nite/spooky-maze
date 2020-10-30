@@ -28,8 +28,6 @@ public class PlayerController : MonoBehaviour {
     Vector3 dir = headYaw * new Vector3(inputAxis.x, 0, inputAxis.y);
     if(!WillCollide(dir)) {
       transform.position += dir * Time.fixedDeltaTime * speed;
-    } else {
-      Debug.Log("Got a collision!");  
     }
   }
 

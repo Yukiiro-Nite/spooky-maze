@@ -8,11 +8,11 @@ public class MazeGenerator {
     Maze maze = new Maze(width, height, type);
 
     // implement maze generation algorithem here.
-    int startX = (int)Math.Floor(Random.Range(0f, width-1));
-    int startY = (int)Math.Floor(Random.Range(0f, height-1));
+    int startX = Random.Range(0, width);
+    int startY = Random.Range(0, height);
 
-    int endX = (int)Math.Floor(Random.Range(0f, width-1));
-    int endY = (int)Math.Floor(Random.Range(0f, height-1));
+    int endX = Random.Range(0, width);
+    int endY = Random.Range(0, height);
 
     maze.start = new Vector2((int)startX, (int)startY);
     maze.end = new Vector2((int)endX, (int)endY);
@@ -27,7 +27,7 @@ public class MazeGenerator {
       if(maze.hasUnvisitedNeighbors(currentCell)) {
         List<Cell> unvisitedNeighbors = maze.getUnvisitedNeighbors(currentCell);
         Shuffle(unvisitedNeighbors);
-        int randomIndex = (int)Math.Floor(Random.Range(0f, unvisitedNeighbors.Count-1));
+        int randomIndex = Random.Range(0, unvisitedNeighbors.Count);
         Cell randomNeighbor = unvisitedNeighbors[randomIndex];
 
         visitedCells.Push(randomNeighbor);

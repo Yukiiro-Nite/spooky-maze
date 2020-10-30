@@ -14,7 +14,9 @@ public class MapManager : MonoBehaviour {
   public int RenderDepth = 5;
   public GameObject Player;
   public GameObject Exit;
-  private Maze maze;
+  public Maze maze;
+  private WallBuilder builder;
+  private Dictionary<GameObject, Vector3> objectsToPlace = new Dictionary<GameObject, Vector3>();
   private static readonly Dictionary<string, string> nextType = new Dictionary<string, string> {
     {"cave", "sewer"},
     {"sewer", "cave"},
@@ -37,17 +39,17 @@ public class MapManager : MonoBehaviour {
       3. move player to maze start
     */
     this.maze = MazeGenerator.generate(Width, Height, GetNextMazeType());
-    WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
+    builder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
 
-    wallBuilder.PlaceObject(Player, maze.start, 0f);
-    wallBuilder.PlaceObject(Exit, maze.end, CeilingHeight);
+    PlaceObject(Player, maze.start, 0f);
+    PlaceObject(Exit, maze.end, CeilingHeight);
   }
 
   public void UpdateMaze(int x, int y) {
     ClearMaze();
 
-    WallBuilder wallBuilder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
-    wallBuilder.BuildMaze(maze.getCell(x, y), RenderDepth);
+    builder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
+    builder.BuildMaze(maze.getCell(x, y), RenderDepth);
   }
 
   public void ClearMaze() {
@@ -69,6 +71,18 @@ public class MapManager : MonoBehaviour {
       case "sewer": return new SewerBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
       case "office": return new OfficeBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
       default: return new WallBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
+    }
+  }
+
+  public void PlaceObject(GameObject obj, Vector2 pos, float height) {
+    if(builder == null) {
+      objectsToPlace.Add(obj, new Vector3(pos.x, height, pos.y));
+    } else {
+      builder.PlaceObject(obj, pos, height);
+      foreach(KeyValuePair<GameObject, Vector3> pair in objectsToPlace) {
+        builder.PlaceObject(pair.Key, new Vector2(pair.Value.x, pair.Value.z), pair.Value.y);
+      }
+      objectsToPlace.Clear();
     }
   }
 }
