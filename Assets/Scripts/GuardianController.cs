@@ -16,9 +16,11 @@ public class GuardianController : MonoBehaviour
     private Vector3? lastPlayerPosition = null;
     private Vector3 targetPosition;
     private CapsuleCollider playerCollider;
+    private SphereCollider selfCollider;
     private MapManager mapManager;
     void Start()
     {
+        selfCollider = gameObject.GetComponent<SphereCollider>();
         playerCollider = GameObject.Find("XR Rig").GetComponent<CapsuleCollider>();
         mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
         Spawn();
@@ -44,9 +46,18 @@ public class GuardianController : MonoBehaviour
 
     void Look()
     {
-        Vector3 direction = (Camera.main.transform.position - transform.position).normalized;
-        bool hasHit = Physics.Raycast(transform.position, direction, out RaycastHit hitInfo, lookDistance);
-        if (hasHit && hitInfo.collider == playerCollider) {
+        Vector3 guardianToPlayer = (Camera.main.transform.position - transform.position).normalized;
+        bool guardianHit = Physics.Raycast(transform.position, guardianToPlayer, out RaycastHit guardianHitInfo, lookDistance);
+
+        Vector3 playerToGuardian = (transform.position - Camera.main.transform.position).normalized;
+        bool playerHit = Physics.Raycast(Camera.main.transform.position, playerToGuardian, out RaycastHit playerHitInfo, lookDistance);
+
+        bool hasHit = guardianHit
+            && playerHit
+            && guardianHitInfo.collider == playerCollider
+            && playerHitInfo.collider == selfCollider;
+
+        if (hasHit) {
             currentMode = Mode.Chase;
             lastPlayerPosition = Camera.main.transform.position;
         } else if (lastPlayerPosition.HasValue) {
@@ -99,7 +110,6 @@ public class GuardianController : MonoBehaviour
 
     void OnCollisionStay(Collision collision)
     {
-        Debug.Log("Has collision stay");
         if (collision.collider == playerCollider) {
             mapManager.PlaceObject(
                 mapManager.Player,
