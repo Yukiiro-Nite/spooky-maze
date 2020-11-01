@@ -109,8 +109,12 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   lookDistance: 10
+  lookMultiplier: 1.5
   movementEpsillon: 0.01
   speed: 1
+  speedMultiplier: 1.5
+  stunLimit: 3
+  stunTimeout: 2
 --- !u!82 &8249003993897674190
 AudioSource:
   m_ObjectHideFlags: 0

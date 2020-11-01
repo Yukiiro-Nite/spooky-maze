@@ -5,8 +5,12 @@ using UnityEngine;
 public class GuardianController : MonoBehaviour
 {
     public float lookDistance = 10f;
+    public float lookMultiplier = 1.5f;
     public float movementEpsillon = 0.01f;
     public float speed = 1f;
+    public float speedMultiplier = 1.5f;
+    public int stunLimit = 3;
+    public float stunTimeout = 1f;
     enum Mode {
         Wonder,
         Chase,
@@ -17,11 +21,15 @@ public class GuardianController : MonoBehaviour
     private Vector3 targetPosition;
     private CapsuleCollider playerCollider;
     private SphereCollider selfCollider;
+    private Rigidbody selfBody;
     private SphereCollider torchCollider;
     private MapManager mapManager;
+    private int stunCount;
+    private bool stunned = false;
     void Start()
     {
         selfCollider = gameObject.GetComponent<SphereCollider>();
+        selfBody = gameObject.GetComponent<Rigidbody>();
         playerCollider = GameObject.Find("XR Rig").GetComponent<CapsuleCollider>();
         mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
         torchCollider = GameObject.Find("TorchTip").GetComponent<SphereCollider>();
@@ -31,8 +39,10 @@ public class GuardianController : MonoBehaviour
     // Update is called once per frame
     void FixedUpdate()
     {
-        Look();
-        Move();
+        if(!stunned) {
+            Look();
+            Move();
+        }
     }
 
     void Spawn()
@@ -45,6 +55,7 @@ public class GuardianController : MonoBehaviour
         Vector2 worldPos = mapManager.GetWorldPosition(mazePos);
         mapManager.PlaceObject(gameObject, mazePos, mapManager.CeilingHeight / 2f);
         targetPosition = new Vector3(worldPos.x, mapManager.CeilingHeight / 2f, worldPos.y);
+        stunCount = 0;
     }
 
     void Look()
@@ -118,7 +129,7 @@ public class GuardianController : MonoBehaviour
         }
     }
 
-    void OnCollisionStay(Collision collision)
+    void OnCollisionEnter(Collision collision)
     {
         if (collision.collider == playerCollider) {
             mapManager.PlaceObject(
@@ -127,7 +138,7 @@ public class GuardianController : MonoBehaviour
                 0f
             );
         } else if (collision.collider == torchCollider) {
-            Spawn();
+            TorchHit();
         }
     }
 
@@ -141,5 +152,30 @@ public class GuardianController : MonoBehaviour
         Vector2 newPos = mapManager.GetWorldPosition(new Vector2(randomNeighbor.x, randomNeighbor.y));
 
         return new Vector3(newPos.x, mapManager.CeilingHeight / 2.0f, newPos.y);
+    }
+
+    void TorchHit()
+    {
+        if(!stunned) {
+            stunCount++;
+            if(stunCount < stunLimit) {
+                StartCoroutine(Stun());
+            } else {
+                speed *= speedMultiplier;
+                lookDistance *= lookMultiplier;
+                Spawn();
+            }
+        }
+    }
+
+    private IEnumerator Stun()
+    {
+        stunned = true;
+        selfBody.useGravity = true;
+
+        yield return new WaitForSeconds(stunTimeout);
+
+        stunned = false;
+        selfBody.useGravity = false;
     }
 }
