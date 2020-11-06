@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 
 public class OfficeBuilder : WallBuilder {
-  public float hallWidth = 1f;
+  public float hallWidth = 1.5f;
 
   protected static readonly Vector2 nDirection = new Vector2(0, -1);
   protected static readonly Vector2 eDirection = new Vector2(1, 0);

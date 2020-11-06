@@ -15,9 +15,9 @@ TagManager:
   - 
   - Player
   - Pickupable
+  - Wall
+  - Floor
   - Ground
-  - 
-  - 
   - 
   - 
   - 

@@ -40,7 +40,10 @@ public class MapManager : MonoBehaviour {
     */
     this.maze = MazeGenerator.generate(Width, Height, GetNextMazeType());
     builder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
-    builder.BuildMaze(maze.getCell(0, 0), RenderDepth);
+    // builder.BuildMaze(maze.getCell(0, 0), RenderDepth);
+    builder.BuildMaze();
+    NavGrid navGrid = GameObject.Find("Navigation").GetComponent<NavGrid>();
+    navGrid.CreateGrid();
 
     PlaceObject(Player, maze.start, 0f);
     PlaceObject(Exit, maze.end, CeilingHeight);

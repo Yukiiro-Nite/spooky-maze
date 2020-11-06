@@ -52,6 +52,13 @@ public class WallBuilder {
     CreateObject("ceilings", meshes["ceiling"], maze.type);
   }
 
+  public virtual void BuildMaze() {
+    Cell startCell = maze.getCell(Vector2.zero);
+    int depth = maze.width * maze.height;
+
+    BuildMaze(startCell, depth);
+  }
+
   protected void CreateObject(string name, List<Mesh> meshes, string zoneType) {
     Material material = MaterialMap.Get(zoneType, name);
     GameObject gameObject = new GameObject(name);
@@ -72,6 +79,8 @@ public class WallBuilder {
 
     if(name == "walls") {
       gameObject.layer = 10;
+    } else if (name == "floors" || name == "channels") {
+      gameObject.layer = 11;
     }
 
   }

@@ -7,7 +7,6 @@ using UnityEngine.XR.Interaction.Toolkit;
 public class PlayerController : MonoBehaviour {
   public float speed = 2f;
   public XRNode InputSrc;
-  public LayerMask groundLayer;
   private XRRig rig;
   private CapsuleCollider player;
   private Vector2 inputAxis;
