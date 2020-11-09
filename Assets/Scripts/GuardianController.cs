@@ -6,7 +6,7 @@ public class GuardianController : MonoBehaviour
 {
     public float lookDistance = 10f;
     public float lookMultiplier = 1.5f;
-    public float movementEpsillon = 0.01f;
+    public float movementEpsillon = 0.1f;
     public float speed = 1f;
     public float speedMultiplier = 1.5f;
     public int stunLimit = 3;
@@ -24,6 +24,8 @@ public class GuardianController : MonoBehaviour
     private Rigidbody selfBody;
     private SphereCollider torchCollider;
     private MapManager mapManager;
+    private Pathfinder pathfinder;
+    private List<NavNode> path = new List<NavNode>();
     private int stunCount;
     private bool stunned = false;
     void Start()
@@ -33,6 +35,7 @@ public class GuardianController : MonoBehaviour
         playerCollider = GameObject.Find("XR Rig").GetComponent<CapsuleCollider>();
         mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
         torchCollider = GameObject.Find("TorchTip").GetComponent<SphereCollider>();
+        pathfinder = GameObject.Find("Navigation").GetComponent<Pathfinder>();
         Spawn();
     }
 
@@ -72,6 +75,9 @@ public class GuardianController : MonoBehaviour
             && playerHitInfo.collider == selfCollider;
 
         if (hasHit) {
+            if(path.Count > 0) {
+                path.Clear();
+            }
             currentMode = Mode.Chase;
             lastPlayerPosition = Camera.main.transform.position;
         } else if (lastPlayerPosition.HasValue && currentMode == Mode.Chase) {
@@ -112,6 +118,10 @@ public class GuardianController : MonoBehaviour
         if(distance > movementEpsillon) {
             Vector3 dir = (nextPos - transform.position).normalized;
             transform.position += dir * Time.fixedDeltaTime * speed;
+        } else {
+            Debug.Log("Switching from chase to Wonder");
+            targetPosition = transform.position;
+            currentMode = Mode.Wonder;
         }
     }
 
@@ -144,14 +154,22 @@ public class GuardianController : MonoBehaviour
 
     Vector3 NextWonderPosition()
     {
-        Vector2 currentPos = mapManager.GetGridPosition(gameObject);
-        Cell currentCell = mapManager.maze.getCell(currentPos);
-        List<Cell> neighbors = mapManager.maze.getConnectedNeighbors(currentCell);
-        Utils.Shuffle(neighbors);
-        Cell randomNeighbor = neighbors[Random.Range(0, neighbors.Count)];
-        Vector2 newPos = mapManager.GetWorldPosition(new Vector2(randomNeighbor.x, randomNeighbor.y));
+        if(path.Count == 0) {
+            Vector2 currentPos = mapManager.GetGridPosition(gameObject);
+            Cell currentCell = mapManager.maze.getCell(currentPos);
+            List<Cell> neighbors = mapManager.maze.getConnectedNeighbors(currentCell);
+            Utils.Shuffle(neighbors);
+            Cell randomNeighbor = neighbors[Random.Range(0, neighbors.Count)];
+            Vector2 newPos = mapManager.GetWorldPosition(new Vector2(randomNeighbor.x, randomNeighbor.y));
+            Vector3 targetPos = new Vector3(newPos.x, 0, newPos.y);
 
-        return new Vector3(newPos.x, mapManager.CeilingHeight / 2.0f, newPos.y);
+            path = pathfinder.FindPath(gameObject.transform.position, targetPos);
+        }
+
+        NavNode nextNode = path[0];
+        path.Remove(nextNode);
+
+        return nextNode.worldPos + Vector3.up * mapManager.CeilingHeight / 2.0f;
     }
 
     void TorchHit()

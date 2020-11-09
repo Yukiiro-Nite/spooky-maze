@@ -32,7 +32,7 @@ public class Pathfinder : MonoBehaviour {
       }
 
       foreach(NavNode neighbor in grid.GetNeighbors(currentNode)) {
-        if(!neighbor.walkable || closedSet.Contains(neighbor)) {
+        if(closedSet.Contains(neighbor)) {
           continue;
         }
 
