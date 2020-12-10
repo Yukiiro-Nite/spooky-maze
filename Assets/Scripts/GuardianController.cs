@@ -1,6 +1,7 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 
 public class GuardianController : MonoBehaviour
 {
@@ -30,6 +31,7 @@ public class GuardianController : MonoBehaviour
     private bool stunned = false;
     void Start()
     {
+        gameObject.SetActive(Settings.HasGuardian);
         selfCollider = gameObject.GetComponent<SphereCollider>();
         selfBody = gameObject.GetComponent<Rigidbody>();
         playerCollider = GameObject.Find("XR Rig").GetComponent<CapsuleCollider>();
@@ -142,13 +144,22 @@ public class GuardianController : MonoBehaviour
     void OnCollisionEnter(Collision collision)
     {
         if (collision.collider == playerCollider) {
+            ResetPlayer();
+        } else if (collision.collider == torchCollider) {
+            TorchHit();
+        }
+    }
+
+    void ResetPlayer()
+    {
+        if(Settings.IsHardcore) {
+            SceneManager.LoadScene("StartMenu", LoadSceneMode.Single);
+        } else {
             mapManager.PlaceObject(
                 mapManager.Player,
                 mapManager.maze.start,
                 0f
             );
-        } else if (collision.collider == torchCollider) {
-            TorchHit();
         }
     }
 

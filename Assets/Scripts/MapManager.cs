@@ -23,6 +23,8 @@ public class MapManager : MonoBehaviour {
   };
   // Start is called before the first frame update
   void Start() {
+    Width = Settings.LevelLength;
+    Height = Settings.LevelLength;
     InitializeMaze();
   }
 
