@@ -31,10 +31,14 @@ public class GuardianController : MonoBehaviour
     private bool stunned = false;
     void Start()
     {
+        string rigName = Settings.IsVR
+            ? "XR Rig"
+            : "Desktop Rig";
+        GameObject playerRig = GameObject.Find(rigName);
         gameObject.SetActive(Settings.HasGuardian);
         selfCollider = gameObject.GetComponent<SphereCollider>();
         selfBody = gameObject.GetComponent<Rigidbody>();
-        playerCollider = GameObject.Find("XR Rig").GetComponent<CapsuleCollider>();
+        playerCollider = playerRig.GetComponent<CapsuleCollider>();
         mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
         torchCollider = GameObject.Find("TorchTip").GetComponent<SphereCollider>();
         pathfinder = GameObject.Find("Navigation").GetComponent<Pathfinder>();

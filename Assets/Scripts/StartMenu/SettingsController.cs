@@ -7,10 +7,7 @@ public class SettingsController : MonoBehaviour
     void Start() {}
 
     public void SetLevelLength(float length) { SetLevelLength((int) length); }
-    public void SetLevelLength(int length) {
-        Debug.Log("Setting Level Length");
-        Settings.LevelLength = length;
-    }
+    public void SetLevelLength(int length) { Settings.LevelLength = length; }
 
     public void SetHasGuardian(bool flag) { Settings.HasGuardian = flag; }
 

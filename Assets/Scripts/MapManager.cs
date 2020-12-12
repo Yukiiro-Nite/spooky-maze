@@ -25,6 +25,10 @@ public class MapManager : MonoBehaviour {
   void Start() {
     Width = Settings.LevelLength;
     Height = Settings.LevelLength;
+    string rigName = Settings.IsVR
+            ? "XR Rig"
+            : "Desktop Rig";
+    Player = GameObject.Find(rigName);
     InitializeMaze();
   }
 
