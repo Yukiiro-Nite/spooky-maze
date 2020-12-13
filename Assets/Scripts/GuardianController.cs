@@ -73,7 +73,8 @@ public class GuardianController : MonoBehaviour
         bool guardianHit = Physics.Raycast(transform.position, guardianToPlayer, out RaycastHit guardianHitInfo, lookDistance);
 
         Vector3 playerToGuardian = (transform.position - Camera.main.transform.position).normalized;
-        bool playerHit = Physics.Raycast(Camera.main.transform.position, playerToGuardian, out RaycastHit playerHitInfo, lookDistance);
+        LayerMask notPlayer = ~LayerMask.GetMask("Player");
+        bool playerHit = Physics.Raycast(Camera.main.transform.position, playerToGuardian, out RaycastHit playerHitInfo, lookDistance, notPlayer);
 
         bool hasHit = guardianHit
             && playerHit
@@ -159,6 +160,11 @@ public class GuardianController : MonoBehaviour
         if(Settings.IsHardcore) {
             SceneManager.LoadScene("StartMenu", LoadSceneMode.Single);
         } else {
+            DesktopController controller = mapManager.Player.GetComponent<DesktopController>();
+            if(controller != null) {
+                controller.isTeleporting = true;
+            }
+
             mapManager.PlaceObject(
                 mapManager.Player,
                 mapManager.maze.start,

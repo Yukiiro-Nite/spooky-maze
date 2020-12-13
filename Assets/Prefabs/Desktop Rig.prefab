@@ -97,7 +97,8 @@ GameObject:
   - component: {fileID: 2660912044011877796}
   - component: {fileID: 5481573877598273800}
   - component: {fileID: 2578090228777920307}
-  m_Layer: 0
+  - component: {fileID: 1781114796494983019}
+  m_Layer: 8
   m_Name: Desktop Rig
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -145,7 +146,7 @@ CapsuleCollider:
   m_GameObject: {fileID: 5481573877598273812}
   m_Material: {fileID: 0}
   m_IsTrigger: 0
-  m_Enabled: 0
+  m_Enabled: 1
   m_Radius: 0.25
   m_Height: 1.5
   m_Direction: 1
@@ -196,6 +197,26 @@ MonoBehaviour:
   speed: 2
   mouseSensitivity: 100
   camera: {fileID: 5481573877414411202}
+  exitObject: {fileID: 0}
+  onExitHover:
+    m_PersistentCalls:
+      m_Calls: []
+  onExitClick:
+    m_PersistentCalls:
+      m_Calls: []
+  isTeleporting: 0
+--- !u!114 &1781114796494983019
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5481573877598273812}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a150a71117d62f141a561c496c1a9a3b, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &5481573878877811947
 PrefabInstance:
   m_ObjectHideFlags: 0

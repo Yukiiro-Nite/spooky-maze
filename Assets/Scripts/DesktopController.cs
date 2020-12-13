@@ -1,12 +1,19 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Events;
 
 public class DesktopController : MonoBehaviour
 {
     public float speed = 2f;
     public float mouseSensitivity = 100f;
     public Transform camera;
+    public GameObject exitObject;
+    public UnityEvent onExitHoverStart;
+    public UnityEvent onExitHoverEnd;
+    public UnityEvent onExitClick;
+    public bool isTeleporting = false;
+    public bool isHovering = false;
     private float xRotation = 0f;
     private CharacterController controller;
 
@@ -18,6 +25,14 @@ public class DesktopController : MonoBehaviour
 
     void Update()
     {
+        // For some reason, if controller.Move is called while teleporting, it does not always work,
+        // so cancel the current update if we're teleporting.
+        // Why are you like this Unity?
+        if(isTeleporting) {
+            isTeleporting = false;
+            return;
+        }
+
         float mouseX = Input.GetAxis("Mouse X") * mouseSensitivity * Time.deltaTime;
         float mouseY = Input.GetAxis("Mouse Y") * mouseSensitivity * Time.deltaTime;
         float x = Input.GetAxis("Horizontal");
@@ -30,5 +45,39 @@ public class DesktopController : MonoBehaviour
         
         camera.localRotation = Quaternion.Euler(xRotation, 0f, 0f);
         transform.Rotate(Vector3.up * mouseX);
+
+        handleInteractions();
+    }
+
+    void OnDisable() {
+        Cursor.lockState = CursorLockMode.None;
+    }
+
+    void handleInteractions()
+    {
+        Vector3 origin = camera.position;
+        Vector3 direction = camera.forward;
+        RaycastHit hitInfo;
+        float maxDistance = 1.5f;
+
+        bool hit = Physics.Raycast(origin, direction, out hitInfo, maxDistance, LayerMask.GetMask("Interactable"));
+
+        if(hit && hitInfo.transform.gameObject == exitObject) {
+            Debug.Log("Desktop player is looking at exit");
+            if(!isHovering) {
+                onExitHoverStart.Invoke();
+                isHovering = true;
+            }
+
+            if(Input.GetButton("Fire1")) {
+                Debug.Log("Desktop player is clicking exit");
+                onExitClick.Invoke();
+            }
+        } else {
+            if(isHovering) {
+                onExitHoverEnd.Invoke();
+                isHovering = false;
+            }
+        }
     }
 }

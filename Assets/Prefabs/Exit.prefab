@@ -69,8 +69,7 @@ AudioSource:
   m_GameObject: {fileID: 7074271031847084226}
   m_Enabled: 1
   serializedVersion: 4
-  OutputAudioMixerGroup: {fileID: 243366450046692526, guid: ec12f7772c03e4c4c9e4c2f1643595ad,
-    type: 2}
+  OutputAudioMixerGroup: {fileID: 0}
   m_audioClip: {fileID: 8300000, guid: 726834ed6fe8726478208561ffdd0cc0, type: 3}
   m_PlayOnAwake: 0
   m_Volume: 1
@@ -173,6 +172,20 @@ MonoBehaviour:
   m_TintOnHover: 1
   m_TintOnSelection: 1
   m_TintRenderers: []
+--- !u!114 &5769388610383577882
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 7074271031847084226}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b2fc936fc8010e4882a7e099a3fb6a6, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  TransitionTime: 3
+  NextScene: CaveScene_2
 --- !u!114 &5769388610383577886
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -258,20 +271,6 @@ MonoBehaviour:
   m_ThrowAngularVelocityScale: 0.25
   m_GravityOnDetach: 0
   m_RetainTransformParent: 1
---- !u!114 &5769388610383577882
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 7074271031847084226}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 0b2fc936fc8010e4882a7e099a3fb6a6, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  TransitionTime: 3
-  NextScene: CaveScene_2
 --- !u!1001 &5769388611322543493
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -333,6 +332,11 @@ PrefabInstance:
         type: 3}
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: -5603568263708238521, guid: 1a1b555aa108e1144a6291d21a2d862a,
+        type: 3}
+      propertyPath: m_Layer
+      value: 13
       objectReference: {fileID: 0}
     - target: {fileID: 919132149155446097, guid: 1a1b555aa108e1144a6291d21a2d862a,
         type: 3}
