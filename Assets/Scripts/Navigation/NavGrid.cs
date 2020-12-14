@@ -10,7 +10,7 @@ public class NavGrid : MonoBehaviour {
   public Vector2 gridWorldSize;
   public float nodeRadius;
   public GameObject unit;
-  public GameObject target;
+  protected Camera target;
   NavNode[,] grid;
   float nodeDiameter {
     get {
@@ -25,6 +25,7 @@ public class NavGrid : MonoBehaviour {
   void Start() {
     mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
     pathfinder = GetComponent<Pathfinder>();
+    target = Camera.main;
   }
 
   void Update() {
@@ -36,6 +37,7 @@ public class NavGrid : MonoBehaviour {
   }
 
   public void CreateGrid() {
+    mapManager = GameObject.Find("MapManager").GetComponent<MapManager>();
     gridWorldSize = new Vector2(
       mapManager.Width * (mapManager.CellSize + mapManager.CellPadding),
       mapManager.Height * (mapManager.CellSize + mapManager.CellPadding)
@@ -46,7 +48,7 @@ public class NavGrid : MonoBehaviour {
     );
     // Should be called after map manager has generated the maze.
     grid = new NavNode[gridSize.x, gridSize.y];
-    
+
     for(int x = 0; x < gridSize.x; x++) {
       for(int y = 0; y < gridSize.y; y++) {
         Vector3 worldPoint = Vector3.right * (x * nodeDiameter + nodeRadius)

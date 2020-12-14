@@ -63,14 +63,12 @@ public class DesktopController : MonoBehaviour
         bool hit = Physics.Raycast(origin, direction, out hitInfo, maxDistance, LayerMask.GetMask("Interactable"));
 
         if(hit && hitInfo.transform.gameObject == exitObject) {
-            Debug.Log("Desktop player is looking at exit");
             if(!isHovering) {
                 onExitHoverStart.Invoke();
                 isHovering = true;
             }
 
             if(Input.GetButton("Fire1")) {
-                Debug.Log("Desktop player is clicking exit");
                 onExitClick.Invoke();
             }
         } else {

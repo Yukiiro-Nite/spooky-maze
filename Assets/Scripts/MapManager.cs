@@ -17,10 +17,6 @@ public class MapManager : MonoBehaviour {
   public Maze maze;
   private WallBuilder builder;
   private Dictionary<GameObject, Vector3> objectsToPlace = new Dictionary<GameObject, Vector3>();
-  private static readonly Dictionary<string, string> nextType = new Dictionary<string, string> {
-    {"cave", "sewer"},
-    {"sewer", "cave"},
-  };
   // Start is called before the first frame update
   void Start() {
     Width = Settings.LevelLength;
@@ -32,11 +28,6 @@ public class MapManager : MonoBehaviour {
     InitializeMaze();
   }
 
-  // Update is called once per frame
-  void Update() {
-    
-  }
-
   public void InitializeMaze() {
     ClearMaze();
     /*
@@ -44,9 +35,8 @@ public class MapManager : MonoBehaviour {
       2. add maze to scene
       3. move player to maze start
     */
-    this.maze = MazeGenerator.generate(Width, Height, GetNextMazeType());
+    this.maze = MazeGenerator.generate(Width, Height, defaultType);
     builder = GetBuilder(maze, CellSize, MinWidth, CeilingHeight, CellPadding);
-    // builder.BuildMaze(maze.getCell(0, 0), RenderDepth);
     builder.BuildMaze();
     NavGrid navGrid = GameObject.Find("Navigation").GetComponent<NavGrid>();
     navGrid.CreateGrid();
@@ -67,12 +57,6 @@ public class MapManager : MonoBehaviour {
     GameObject.Destroy(GameObject.Find("walls"));
     GameObject.Destroy(GameObject.Find("ceilings"));
     GameObject.Destroy(GameObject.Find("channels"));
-  }
-
-  public string GetNextMazeType() {
-    return this.maze == null
-      ? defaultType
-      : nextType[this.maze.type];
   }
 
   public WallBuilder GetBuilder(Maze maze, float CellSize, float MinWidth, float CeilingHeight, float CellPadding) {

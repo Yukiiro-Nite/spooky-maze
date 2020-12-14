@@ -15,6 +15,7 @@ public class ExitHandler : MonoBehaviour {
 
   public void DoExit() {
     if(!exiting) {
+      Debug.Log("Player going to next scene: " + NextScene);
       exiting = true;
       audio.Play();
       StartCoroutine(TransitionScene(TransitionTime, NextScene));
